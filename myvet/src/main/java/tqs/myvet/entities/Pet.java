@@ -26,33 +26,13 @@ public class Pet {
 
     @Column(nullable = false)
     @Size(min = 2, max = 30)
-<<<<<<< Updated upstream
-    private String ownerName;
-
-    @NotNull
-    // @Email
-    private String ownerEmail;
-
-    @NotNull
-    private String ownerPhone;
-
-    @NotNull
-    @Size(min = 2, max = 30)
-    private String petName;
-=======
     private String name;
->>>>>>> Stashed changes
 
     @Column(nullable = false)
     private String sex;
 
-<<<<<<< Updated upstream
-    @NotNull
-    private int petAge;
-=======
     @Column(nullable = false)
     private String birthdate;
->>>>>>> Stashed changes
 
     @Column(nullable = false)
     @Size(min = 2, max = 30)
