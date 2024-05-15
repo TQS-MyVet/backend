@@ -1,5 +1,6 @@
 package tqs.myvet.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,10 +23,10 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false)
     @Size(min = 2, max = 30)
     private String name;
 
-    @NotNull
+    @Column(nullable = false)
     private String password;
 }

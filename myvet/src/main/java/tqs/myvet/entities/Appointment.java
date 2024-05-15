@@ -1,5 +1,6 @@
 package tqs.myvet.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,16 +25,16 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false)
     private LocalDate date;
 
-    @NotNull
+    @Column(nullable = false)
     private LocalTime hour;
 
-    @NotNull
+    @Column(nullable = false)
     @Size(min = 2, max = 30)
     private String type;
 
-    @Size(max = 500)
+    @Column(nullable = false)
     private String docNotes;
 }

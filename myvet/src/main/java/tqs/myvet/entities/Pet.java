@@ -1,6 +1,7 @@
 package tqs.myvet.entities;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,14 +18,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "pet")
+@Table(name = "pets")
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false)
     @Size(min = 2, max = 30)
+<<<<<<< Updated upstream
     private String ownerName;
 
     @NotNull
@@ -37,16 +39,24 @@ public class Pet {
     @NotNull
     @Size(min = 2, max = 30)
     private String petName;
+=======
+    private String name;
+>>>>>>> Stashed changes
 
-    @NotNull
-    private String petSex;
+    @Column(nullable = false)
+    private String sex;
 
+<<<<<<< Updated upstream
     @NotNull
     private int petAge;
+=======
+    @Column(nullable = false)
+    private String birthdate;
+>>>>>>> Stashed changes
 
-    @NotNull
+    @Column(nullable = false)
     @Size(min = 2, max = 30)
-    private String petSpecies;
+    private String species;
 
     @NotNull
     private String ownerPassword;
