@@ -19,6 +19,7 @@
 		<java.version>17</java.version>
 		<sonar.organization>tqs-myvet</sonar.organization>
   		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<!-- <surefire-plugin-version>3.0.0-M9</surefire-plugin-version> -->
 	</properties>
 
 	<dependencies>
@@ -142,11 +143,11 @@
 			<!-- Note that JUnit 5 requires Surefire version 2.22.1 or higher -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-plugin-version}</version>
+                <version>3.0.0-M9</version>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${surefire-plugin-version}</version>
+                <version>3.0.0-M9</version>
             </plugin>
 
             <!-- Jacoco runner to inspect code coverage -->
