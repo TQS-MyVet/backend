@@ -11,4 +11,5 @@ import tqs.myvet.entities.Pet;
 public interface UserRepository extends JpaRepository<User, Long> {
     List<Pet> findPetsById(Long id);
 
+
 }

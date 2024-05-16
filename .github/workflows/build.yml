@@ -24,6 +24,8 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+      - name: Run Docker Compose
+        run: docker-compose up -d
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
