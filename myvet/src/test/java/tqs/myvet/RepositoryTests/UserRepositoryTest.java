@@ -13,7 +13,7 @@ import tqs.myvet.entities.User;
 import tqs.myvet.repositories.UserRepository;
 
 @DataJpaTest
-public class UserRepositoryTest {
+class UserRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -21,7 +21,7 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    public void whenFindById_thenReturnUser() {
+    void whenFindById_thenReturnUser() {
         User user = new User();
         user.setUsername("user");
         user.setName("Antony");
@@ -39,13 +39,13 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void whenInvalidId_thenReturnNull() {
+    void whenInvalidId_thenReturnNull() {
         User fromDb = userRepository.findById(-11L).orElse(null);
         assertThat(fromDb).isNull();
     }
 
     @Test
-    public void givenSetOfUsers_whenFindAll_thenReturnAllUsers() {
+    void givenSetOfUsers_whenFindAll_thenReturnAllUsers() {
         User user1 = new User();
         user1.setUsername("user1");
         user1.setName("Antony");
