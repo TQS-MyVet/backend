@@ -16,11 +16,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "doctor")
+@Table(name = "doctors")
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long doctorId;
 
     @Column(nullable = false)
     @Size(min = 2, max = 30)

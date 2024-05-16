@@ -19,11 +19,11 @@ import java.time.LocalTime;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "appointment")
+@Table(name = "appointments")
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long appointmentId;
 
     @Column(nullable = false)
     private LocalDate date;
