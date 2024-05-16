@@ -8,7 +8,5 @@ import tqs.myvet.entities.Pet;
 
 @Repository
 public interface PetRepository extends JpaRepository<Pet, Long> {
-    List<Pet> findByOwnerName(String name);
-    List<Pet> findByOwnerEmail(String email);
-    List<Pet> findByPetName(String name);
+    List<Pet> findByName(String name);
 }

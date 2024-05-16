@@ -9,9 +9,5 @@ import tqs.myvet.entities.Appointment;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
-    // List<Appointment> findByDate(Date date);
-
-    // List<Appointment> findByHour(String hour);
-
     List<Appointment> findByType(String type);
 }
