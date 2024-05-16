@@ -12,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import tqs.myvet.entities.User;
 import tqs.myvet.repositories.UserRepository;
 
+import java.util.Arrays;
+
 @DataJpaTest
 public class UserRepositoryTest {
     @Autowired
@@ -23,19 +25,17 @@ public class UserRepositoryTest {
     @Test
     public void whenFindById_thenReturnUser() {
         User user = new User();
-        user.setUsername("user");
         user.setName("Antony");
         user.setEmail("user@email.com");
         user.setPhone(123456789);
         user.setPassword("password");
-        user.setRole("USER");
+        user.setRoles(Arrays.asList("USER"));
 
         entityManager.persistAndFlush(user);
 
         User found = userRepository.findById(user.getId()).get();
 
-        assertThat(found.getUsername()).isEqualTo(user.getUsername());
-
+        assertThat(found.getName()).isEqualTo(user.getName());
     }
 
     @Test
@@ -47,28 +47,25 @@ public class UserRepositoryTest {
     @Test
     public void givenSetOfUsers_whenFindAll_thenReturnAllUsers() {
         User user1 = new User();
-        user1.setUsername("user1");
         user1.setName("Antony");
         user1.setEmail("antony@mail.com");
         user1.setPhone(123456789);
         user1.setPassword("password");
-        user1.setRole("USER");
+        user1.setRoles(Arrays.asList("USER"));
 
         User user2 = new User();
-        user2.setUsername("user2");
         user2.setName("Antony");
         user2.setEmail("dada@faf.com");
         user2.setPhone(123456789);
         user2.setPassword("password");
-        user2.setRole("USER");
+        user2.setRoles(Arrays.asList("USER"));
 
         User user3 = new User();
-        user3.setUsername("user3");
         user3.setName("Antony");
         user3.setEmail("dad@gamilc.om");
         user3.setPhone(123456789);
         user3.setPassword("password");
-        user3.setRole("DOC");
+        user3.setRoles(Arrays.asList("DOC"));
 
         entityManager.persist(user1);
         entityManager.persist(user2);
@@ -77,10 +74,10 @@ public class UserRepositoryTest {
 
         List<User> allUsers = userRepository.findAll();
 
-        long countUsers = allUsers.stream().filter(user -> user.getRole().equals("USER")).count();
-        long countDocs = allUsers.stream().filter(user -> user.getRole().equals("DOC")).count();
+        long countUsers = allUsers.stream().filter(user -> user.getRoles().contains("USER")).count();
+        long countDocs = allUsers.stream().filter(user -> user.getRoles().contains("DOC")).count();
 
-        assertThat(allUsers).hasSize(3).extracting(User::getUsername).containsOnly(user1.getUsername(), user2.getUsername(), user3.getUsername());
+        assertThat(allUsers).hasSize(3).extracting(User::getName).containsOnly(user1.getName(), user2.getName(), user3.getName());
         assertThat(countUsers).isEqualTo(2);
         assertThat(countDocs).isEqualTo(1);
     }
