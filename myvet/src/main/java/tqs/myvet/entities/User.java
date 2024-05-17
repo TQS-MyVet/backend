@@ -27,9 +27,6 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
@@ -42,7 +39,7 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String role;
+    private List<String> roles;
     
     @OneToMany
     @JoinColumn(name = "pets_id")
