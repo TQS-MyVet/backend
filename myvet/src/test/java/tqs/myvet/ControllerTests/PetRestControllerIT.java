@@ -43,14 +43,7 @@ public class PetRestControllerIT {
     @Autowired
     private PetRepository repository;
 
-    private List<Pet> pets;
 
-    @BeforeEach
-    void setUp() {
-        pets = new ArrayList<>();
-        pets.add(repository.save(new Pet(1L, "Rex", "M", "2020-01-01", "Dog")));
-        pets.add(repository.save(new Pet(2L, "Mimi", "F", "2020-01-01", "Cat")));
-    }
 
     @AfterEach
     void tearDown() {
@@ -59,6 +52,13 @@ public class PetRestControllerIT {
 
     @Test
     void whenGetPets_thenReturnPets() throws Exception {
+        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
+        Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat");
+        repository.save(pet);
+        repository.save(pet2);
+
+        List<Pet> pets = Arrays.asList(pet, pet2);
+
         mvc.perform(get("/api/pets")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -69,10 +69,13 @@ public class PetRestControllerIT {
 
     @Test
     void whenGetPetById_thenReturnPet() throws Exception {
+        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
+        repository.save(pet);
+
         mvc.perform(get("/api/pets/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(pets.get(0).getName())));
+                .andExpect(jsonPath("$.name", is(pet.getName())));
 
     }
 
@@ -86,12 +89,14 @@ public class PetRestControllerIT {
 
     @Test
     void whenGetPetsBySpecies_thenReturnPets() throws Exception {
+        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
+        repository.save(pet);
 
         mvc.perform(get("/api/pets/species/Dog")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is(pets.get(0).getName())));
+                .andExpect(jsonPath("$[0].name", is(pet.getName())));
 
 
     }
@@ -106,6 +111,13 @@ public class PetRestControllerIT {
 
     @Test
     void whenGetPetsByName_thenReturnPets() throws Exception {
+        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
+        Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat");
+        repository.save(pet);
+        repository.save(pet2);
+
+        List<Pet> pets = Arrays.asList(pet, pet2);
+
         mvc.perform(get("/api/pets/name/Rex")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -125,10 +137,11 @@ public class PetRestControllerIT {
     @Test
     void whenSavePet_thenReturnsSavedPet() throws Exception {
         Pet newPet = new Pet(3L, "Birdy", "M", "2021-01-01", "Bird");
+
         mvc.perform(post("/api/pets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(newPet)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is(newPet.getName())));
     }
 
