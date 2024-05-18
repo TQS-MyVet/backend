@@ -139,7 +139,8 @@ class PetController_WithMockServiceTest {
         mvc.perform(post("/api/pets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(newPet)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
+
                 .andExpect(jsonPath("$.name", is(newPet.getName())));
 
         verify(petService, times(1)).savePet(any(Pet.class));
