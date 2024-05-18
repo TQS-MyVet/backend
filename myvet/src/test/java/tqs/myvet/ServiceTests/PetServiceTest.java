@@ -1,7 +1,6 @@
 package tqs.myvet.ServiceTests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.List;
@@ -16,13 +15,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import jakarta.persistence.EntityNotFoundException;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.repositories.PetRepository;
 import tqs.myvet.services.PetServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-public class PetServiceTest {
+class PetServiceTest {
     @Mock(lenient = true)
     private PetRepository petRepository;
 
@@ -49,7 +47,7 @@ public class PetServiceTest {
 
     @Test
     @DisplayName("Test findById when pet exists")
-    public void testFindById() {
+    void testFindById() {
         Pet result = petService.getPetById(1L);
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo("Fido");
@@ -59,7 +57,7 @@ public class PetServiceTest {
     
     @Test
     @DisplayName("Test findById when pet does not exist")
-    public void testFindByIdNotFound() {
+    void testFindByIdNotFound() {
         Pet result = petService.getPetById(-99L);
         assertThat(result).isNull();
 
@@ -68,7 +66,7 @@ public class PetServiceTest {
     
     @Test
     @DisplayName("Test findAll")
-    public void testFindAll() {
+    void testFindAll() {
         List<Pet> result = petService.getAllPets();
         assertThat(result).hasSize(2);
         assertThat(result).extracting(Pet::getName).containsExactlyInAnyOrder("Fido", "Mimi");
@@ -78,7 +76,7 @@ public class PetServiceTest {
     
     @Test
     @DisplayName("Test findByName")
-    public void testFindByName() {
+    void testFindByName() {
         List<Pet> result = petService.getPetsByName("Fido");
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getName()).isEqualTo("Fido");
@@ -88,11 +86,12 @@ public class PetServiceTest {
     
     @Test
     @DisplayName("Test findBySpecies")
-    public void testFindBySpecies() {
+    void testFindBySpecies() {
         List<Pet> result = petService.getPetsBySpecies("Dog");
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getSpecies()).isEqualTo("Dog");
 
         Mockito.verify(petRepository, Mockito.times(1)).findBySpecies(any());
     }
+
 }
