@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import jakarta.persistence.EntityNotFoundException;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.repositories.PetRepository;
-import tqs.myvet.services.PetService;
+import tqs.myvet.services.PetServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class PetServiceTest {
@@ -27,7 +27,7 @@ public class PetServiceTest {
     private PetRepository petRepository;
 
     @InjectMocks
-    private PetService petService;
+    private PetServiceImpl petService;
 
     @BeforeEach
     public void setUp() {
@@ -53,12 +53,17 @@ public class PetServiceTest {
         Pet result = petService.getPetById(1L);
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo("Fido");
+
+        Mockito.verify(petRepository, Mockito.times(1)).findById(any());
     }
     
     @Test
     @DisplayName("Test findById when pet does not exist")
     public void testFindByIdNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> petService.getPetById(-99L));
+        Pet result = petService.getPetById(-99L);
+        assertThat(result).isNull();
+
+        Mockito.verify(petRepository, Mockito.times(1)).findById(any());
     }
     
     @Test
@@ -67,6 +72,8 @@ public class PetServiceTest {
         List<Pet> result = petService.getAllPets();
         assertThat(result).hasSize(2);
         assertThat(result).extracting(Pet::getName).containsExactlyInAnyOrder("Fido", "Mimi");
+
+        Mockito.verify(petRepository, Mockito.times(1)).findAll();
     }
     
     @Test
@@ -75,6 +82,8 @@ public class PetServiceTest {
         List<Pet> result = petService.getPetsByName("Fido");
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getName()).isEqualTo("Fido");
+
+        Mockito.verify(petRepository, Mockito.times(1)).findByName(any());
     }
     
     @Test
@@ -83,5 +92,7 @@ public class PetServiceTest {
         List<Pet> result = petService.getPetsBySpecies("Dog");
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getSpecies()).isEqualTo("Dog");
+
+        Mockito.verify(petRepository, Mockito.times(1)).findBySpecies(any());
     }
 }
