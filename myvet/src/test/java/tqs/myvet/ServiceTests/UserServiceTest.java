@@ -81,6 +81,15 @@ class AppointmentServiceTest {
     }
 
     @Test
+    @DisplayName("Test get the pets of a user with invalid id")
+    void testGetUserPetsWithInvalidId() {
+        Long id = -1L;
+        Mockito.when(userRepository.findById(id)).thenReturn(Optional.empty());
+        List<Pet> found = userService.getUserPets(id);
+        assertThat(found).isEmpty();
+    }
+
+    @Test
     @DisplayName("Test create user")
     void testCreateUser() {
         User user = new User();
