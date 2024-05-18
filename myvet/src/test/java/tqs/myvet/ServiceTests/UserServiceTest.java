@@ -23,7 +23,7 @@ import tqs.myvet.repositories.UserRepository;
 import tqs.myvet.services.UserServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-class AppointmentServiceTest {
+class UserServiceTest {
 
     @Mock(lenient = true)
     private UserRepository userRepository;
@@ -31,11 +31,13 @@ class AppointmentServiceTest {
     @InjectMocks
     private UserServiceImpl userService;
 
+    private User user;
+
     @BeforeEach
     void setUp() {
         Pet pet = new Pet(1L, "Bobi", "Masculino", "15/05/2009", "Cão");
         Pet pet2 = new Pet(2L, "Mimi", "Feminino", "15/05/2010", "Gato");
-        User user = new User(1L, "José Silva", "jose@gmail.com", 919165004, "batata123", Arrays.asList("ROLE_USER"),
+        user = new User(1L, "José Silva", "jose@gmail.com", 919165004, "batata123", Arrays.asList("ROLE_USER"),
                 Arrays.asList(pet, pet2));
 
         Mockito.when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
@@ -119,7 +121,8 @@ class AppointmentServiceTest {
         updatedUser.setPassword("batata123");
         updatedUser.setRoles(Arrays.asList("ROLE_USER"));
 
-        Mockito.when(userRepository.save(updatedUser)).thenReturn(updatedUser);
+        Mockito.when(userRepository.findById(updatedUser.getId())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.save(any(User.class))).thenReturn(updatedUser);
 
         User updated = userService.updateUser(1L, updatedUser);
 
