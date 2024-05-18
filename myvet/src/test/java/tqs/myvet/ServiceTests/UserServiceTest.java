@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
 import tqs.myvet.repositories.UserRepository;
-import tqs.myvet.services.UserService;
+import tqs.myvet.services.UserServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class AppointmentServiceTest {
@@ -29,7 +29,7 @@ class AppointmentServiceTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
@@ -78,6 +78,15 @@ class AppointmentServiceTest {
         assertThat(found).hasSize(2);
         assertEquals("Bobi", found.get(0).getName());
         assertEquals("Mimi", found.get(1).getName());
+    }
+
+    @Test
+    @DisplayName("Test get the pets of a user with invalid id")
+    void testGetUserPetsWithInvalidId() {
+        Long id = -1L;
+        Mockito.when(userRepository.findById(id)).thenReturn(Optional.empty());
+        List<Pet> found = userService.getUserPets(id);
+        assertThat(found).isEmpty();
     }
 
     @Test
