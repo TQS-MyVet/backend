@@ -13,7 +13,7 @@ import tqs.myvet.entities.Appointment;
 import tqs.myvet.repositories.AppointmentRepository;
 
 @DataJpaTest
-public class AppointmentRepositoryTest {
+class AppointmentRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -21,7 +21,7 @@ public class AppointmentRepositoryTest {
     private AppointmentRepository appointmentRepository;
 
     @Test
-    public void whenFindById_thenReturnAppointment() {
+    void whenFindById_thenReturnAppointment() {
         Appointment appointment = new Appointment();
         appointment.setDate("2021-05-05");
         appointment.setType("Consultation");
@@ -35,13 +35,13 @@ public class AppointmentRepositoryTest {
     }
 
     @Test
-    public void whenInvalidId_thenReturnNull() {
+    void whenInvalidId_thenReturnNull() {
         Appointment fromDb = appointmentRepository.findById(-11L).orElse(null);
         assertThat(fromDb).isNull();
     }
 
     @Test
-    public void givenSetOfAppointments_whenFindAll_thenReturnAllAppointments() {
+    void givenSetOfAppointments_whenFindAll_thenReturnAllAppointments() {
         Appointment appointment1 = new Appointment();
         appointment1.setDate("2021-05-05");
         appointment1.setType("Consultation");

@@ -12,7 +12,7 @@ import tqs.myvet.entities.Pet;
 import tqs.myvet.repositories.PetRepository;
 
 @DataJpaTest
-public class PetRepositoryTest {
+class PetRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -20,7 +20,7 @@ public class PetRepositoryTest {
     private PetRepository petRepository;
 
     @Test
-    public void whenFindById_thenReturnPet() {
+    void whenFindById_thenReturnPet() {
         Pet pet = new Pet();
         pet.setName("Rex");
         pet.setSex("M");
@@ -29,13 +29,13 @@ public class PetRepositoryTest {
     }
 
     @Test
-    public void whenInvalidId_thenReturnNull() {
+    void whenInvalidId_thenReturnNull() {
         Pet fromDb = petRepository.findById(-11L).orElse(null);
         assertThat(fromDb).isNull();
     }
 
     @Test
-    public void givenSetOfPets_whenFindAll_thenReturnAllPets() {
+    void givenSetOfPets_whenFindAll_thenReturnAllPets() {
         Pet pet1 = new Pet();
         pet1.setName("Rex");
         pet1.setSex("M");
