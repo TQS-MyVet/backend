@@ -24,7 +24,7 @@ class AppointmentServiceTest {
     
     LocalDateTime now = LocalDateTime.now();
 
-    @Mock
+    @Mock(lenient = true)
     private AppointmentRepository appointmentRepository;
 
     @InjectMocks
