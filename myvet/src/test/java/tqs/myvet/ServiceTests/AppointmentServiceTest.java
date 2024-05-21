@@ -1,0 +1,94 @@
+package tqs.myvet.ServiceTests;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cglib.core.Local;
+
+import jakarta.persistence.EntityNotFoundException;
+
+import tqs.myvet.repositories.AppointmentRepository;
+import tqs.myvet.services.AppointmentService;
+import tqs.myvet.entities.*;
+
+@ExtendWith(MockitoExtension.class)
+class AppointmentServiceTest {
+    
+    LocalDateTime now = LocalDateTime.now();
+
+    @Mock(lenient = true)
+    private AppointmentRepository appointmentRepository;
+
+    @InjectMocks
+    private AppointmentService appointmentService;
+
+    @BeforeEach
+    void setUp() {
+        User doctor = new User();
+        
+        Appointment ap1 = new Appointment(1L, now, "Consultation", "The dog is sick", doctor);
+        Appointment ap2 = new Appointment(2L, now, "Operation", "The dog needs surgery", doctor);
+
+        List<Appointment> allAppointments = List.of(ap1, ap2);
+
+        Mockito.when(appointmentRepository.findById(ap1.getId())).thenReturn(Optional.of(ap1));
+        Mockito.when(appointmentRepository.findById(ap2.getId())).thenReturn(Optional.of(ap2));
+        Mockito.when(appointmentRepository.findById(-99L)).thenReturn(Optional.empty());
+        Mockito.when(appointmentRepository.findAll()).thenReturn(allAppointments);
+
+        Mockito.when(appointmentRepository.findByDate(ap1.getDate())).thenReturn(allAppointments);
+        Mockito.when(appointmentRepository.findByDate(ap2.getDate())).thenReturn(allAppointments);
+
+        Mockito.when(appointmentRepository.findByType(ap1.getType())).thenReturn(List.of(ap1));
+        Mockito.when(appointmentRepository.findByType(ap2.getType())).thenReturn(List.of(ap2));
+    }
+
+    @Test
+    @DisplayName("Test get all appointments")
+    void testGetAllAppointments() {
+        List<Appointment> allAppointments = appointmentService.getAllAppointments();
+        assertThat(allAppointments).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("Test get appointment by id")
+    void testGetAppointmentById() {
+        Appointment ap1 = appointmentService.getAppointmentById(1L);
+        assertThat(ap1.getId()).isEqualTo(1L);
+        assertThat(ap1.getType()).isEqualTo("Consultation");
+    }
+
+    @Test
+    @DisplayName("Test get appointment by id not found")
+    void testGetAppointmentByIdNotFound() {
+        assertThrows(EntityNotFoundException.class, () -> {
+            appointmentService.getAppointmentById(-99L);
+        });
+    }
+
+    @Test
+    @DisplayName("Test get appointments by date")
+    void testGetAppointmentsByDate() {
+        List<Appointment> appointments = appointmentService.getAppointmentsByDate(now);
+        assertThat(appointments).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("Test get appointments by type")
+    void testGetAppointmentsByType() {
+        List<Appointment> appointments = appointmentService.getAppointmentsByType("Consultation");
+        assertThat(appointments).hasSize(1);
+    }
+}

@@ -1,5 +1,6 @@
 package tqs.myvet.RepositoryTests;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import tqs.myvet.entities.Appointment;
 import tqs.myvet.repositories.AppointmentRepository;
+import tqs.myvet.entities.User;
 
 @DataJpaTest
 class AppointmentRepositoryTest {
@@ -22,11 +24,14 @@ class AppointmentRepositoryTest {
 
     @Test
     void whenFindById_thenReturnAppointment() {
+        User user = new User();
         Appointment appointment = new Appointment();
-        appointment.setDate("2021-05-05");
+        appointment.setDate(LocalDateTime.now());
         appointment.setType("Consultation");
         appointment.setDocNotes("The dog is sick");
+        appointment.setUser(user);
 
+        
         entityManager.persistAndFlush(appointment);
 
         Appointment found = appointmentRepository.findById(appointment.getId()).get();
@@ -43,17 +48,17 @@ class AppointmentRepositoryTest {
     @Test
     void givenSetOfAppointments_whenFindAll_thenReturnAllAppointments() {
         Appointment appointment1 = new Appointment();
-        appointment1.setDate("2021-05-05");
+        appointment1.setDate(LocalDateTime.now());
         appointment1.setType("Consultation");
         appointment1.setDocNotes("The dog is sick");
 
         Appointment appointment2 = new Appointment();
-        appointment2.setDate("2021-05-06");
+        appointment2.setDate(LocalDateTime.now());
         appointment2.setType("Consultation");
         appointment2.setDocNotes("The dog is sick");
 
         Appointment appointment3 = new Appointment();
-        appointment3.setDate("2021-05-07");
+        appointment3.setDate(LocalDateTime.now());
         appointment3.setType("Consultation");
         appointment3.setDocNotes("The dog is sick");
 
