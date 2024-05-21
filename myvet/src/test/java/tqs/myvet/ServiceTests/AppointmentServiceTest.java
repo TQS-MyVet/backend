@@ -1,7 +1,6 @@
 package tqs.myvet.ServiceTests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,12 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.cglib.core.Local;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import tqs.myvet.repositories.AppointmentRepository;
-import tqs.myvet.services.AppointmentService;
+import tqs.myvet.services.AppointmentServiceImpl;
 import tqs.myvet.entities.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,14 +24,15 @@ class AppointmentServiceTest {
     
     LocalDateTime now = LocalDateTime.now();
 
-    @Mock(lenient = true)
+    @Mock
     private AppointmentRepository appointmentRepository;
 
     @InjectMocks
-    private AppointmentService appointmentService;
+    private AppointmentServiceImpl appointmentService;
 
     @BeforeEach
     void setUp() {
+
         User doctor = new User();
         
         Appointment ap1 = new Appointment(1L, now, "Consultation", "The dog is sick", doctor);
@@ -43,16 +40,16 @@ class AppointmentServiceTest {
 
         List<Appointment> allAppointments = List.of(ap1, ap2);
 
-        Mockito.when(appointmentRepository.findById(ap1.getId())).thenReturn(Optional.of(ap1));
-        Mockito.when(appointmentRepository.findById(ap2.getId())).thenReturn(Optional.of(ap2));
-        Mockito.when(appointmentRepository.findById(-99L)).thenReturn(Optional.empty());
-        Mockito.when(appointmentRepository.findAll()).thenReturn(allAppointments);
+        Mockito.lenient().when(appointmentRepository.findById(ap1.getId())).thenReturn(Optional.of(ap1));
+        Mockito.lenient().when(appointmentRepository.findById(ap2.getId())).thenReturn(Optional.of(ap2));
+        Mockito.lenient().when(appointmentRepository.findById(-99L)).thenReturn(Optional.empty());
+        Mockito.lenient().when(appointmentRepository.findAll()).thenReturn(allAppointments);
 
-        Mockito.when(appointmentRepository.findByDate(ap1.getDate())).thenReturn(allAppointments);
-        Mockito.when(appointmentRepository.findByDate(ap2.getDate())).thenReturn(allAppointments);
+        Mockito.lenient().when(appointmentRepository.findByDate(ap1.getDate())).thenReturn(allAppointments);
+        Mockito.lenient().when(appointmentRepository.findByDate(ap2.getDate())).thenReturn(allAppointments);
 
-        Mockito.when(appointmentRepository.findByType(ap1.getType())).thenReturn(List.of(ap1));
-        Mockito.when(appointmentRepository.findByType(ap2.getType())).thenReturn(List.of(ap2));
+        Mockito.lenient().when(appointmentRepository.findByType(ap1.getType())).thenReturn(List.of(ap1));
+        Mockito.lenient().when(appointmentRepository.findByType(ap2.getType())).thenReturn(List.of(ap2));
     }
 
     @Test
@@ -73,9 +70,9 @@ class AppointmentServiceTest {
     @Test
     @DisplayName("Test get appointment by id not found")
     void testGetAppointmentByIdNotFound() {
-        assertThrows(EntityNotFoundException.class, () -> {
-            appointmentService.getAppointmentById(-99L);
-        });
+        Appointment ap = appointmentService.getAppointmentById(-99L);
+
+        assertThat(ap).isNull();
     }
 
     @Test
@@ -90,5 +87,35 @@ class AppointmentServiceTest {
     void testGetAppointmentsByType() {
         List<Appointment> appointments = appointmentService.getAppointmentsByType("Consultation");
         assertThat(appointments).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("Create a new appointment")
+    void testCreateAppointment() {
+        User doctor = new User();
+        Appointment ap = new Appointment(3L, now, "Consultation", "The dog is sick", doctor);
+        Appointment createAp = new Appointment(3L, now, "Consultation", "The dog is sick", doctor);
+
+        createAp.setId(1L);
+        
+        Mockito.when(appointmentRepository.save(ap)).thenReturn(createAp);
+
+        Appointment savedAp = appointmentService.saveAppointment(ap);
+        assertThat(savedAp.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("Update an appointment")
+    void testUpdateAppointment() {
+        User doctor = new User();
+        Appointment ap = new Appointment(1L, now, "Consultation", "The dog is sick", doctor);
+        Appointment updateAp = new Appointment(1L, now, "Consultation", "The dog is sick", doctor);
+
+        updateAp.setType("Operation");
+        
+        Mockito.when(appointmentRepository.save(ap)).thenReturn(updateAp);
+
+        Appointment savedAp = appointmentService.saveAppointment(ap);
+        assertThat(savedAp.getType()).isEqualTo("Operation");
     }
 }
