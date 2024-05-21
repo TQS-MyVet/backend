@@ -1,7 +1,6 @@
 package tqs.myvet.ServiceTests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,8 +15,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import jakarta.persistence.EntityNotFoundException;
-
 import tqs.myvet.repositories.AppointmentRepository;
 import tqs.myvet.services.AppointmentServiceImpl;
 import tqs.myvet.entities.*;
@@ -27,7 +24,7 @@ class AppointmentServiceTest {
     
     LocalDateTime now = LocalDateTime.now();
 
-    @Mock(lenient = true)
+    @Mock
     private AppointmentRepository appointmentRepository;
 
     @InjectMocks
