@@ -24,7 +24,7 @@ class AppointmentServiceTest {
     
     LocalDateTime now = LocalDateTime.now();
 
-    @Mock(lenient = true)
+    @Mock
     private AppointmentRepository appointmentRepository;
 
     @InjectMocks
@@ -32,6 +32,7 @@ class AppointmentServiceTest {
 
     @BeforeEach
     void setUp() {
+
         User doctor = new User();
         
         Appointment ap1 = new Appointment(1L, now, "Consultation", "The dog is sick", doctor);
@@ -39,16 +40,16 @@ class AppointmentServiceTest {
 
         List<Appointment> allAppointments = List.of(ap1, ap2);
 
-        Mockito.when(appointmentRepository.findById(ap1.getId())).thenReturn(Optional.of(ap1));
-        Mockito.when(appointmentRepository.findById(ap2.getId())).thenReturn(Optional.of(ap2));
-        Mockito.when(appointmentRepository.findById(-99L)).thenReturn(Optional.empty());
-        Mockito.when(appointmentRepository.findAll()).thenReturn(allAppointments);
+        Mockito.lenient().when(appointmentRepository.findById(ap1.getId())).thenReturn(Optional.of(ap1));
+        Mockito.lenient().when(appointmentRepository.findById(ap2.getId())).thenReturn(Optional.of(ap2));
+        Mockito.lenient().when(appointmentRepository.findById(-99L)).thenReturn(Optional.empty());
+        Mockito.lenient().when(appointmentRepository.findAll()).thenReturn(allAppointments);
 
-        Mockito.when(appointmentRepository.findByDate(ap1.getDate())).thenReturn(allAppointments);
-        Mockito.when(appointmentRepository.findByDate(ap2.getDate())).thenReturn(allAppointments);
+        Mockito.lenient().when(appointmentRepository.findByDate(ap1.getDate())).thenReturn(allAppointments);
+        Mockito.lenient().when(appointmentRepository.findByDate(ap2.getDate())).thenReturn(allAppointments);
 
-        Mockito.when(appointmentRepository.findByType(ap1.getType())).thenReturn(List.of(ap1));
-        Mockito.when(appointmentRepository.findByType(ap2.getType())).thenReturn(List.of(ap2));
+        Mockito.lenient().when(appointmentRepository.findByType(ap1.getType())).thenReturn(List.of(ap1));
+        Mockito.lenient().when(appointmentRepository.findByType(ap2.getType())).thenReturn(List.of(ap2));
     }
 
     @Test
