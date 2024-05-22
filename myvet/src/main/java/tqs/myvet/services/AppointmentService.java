@@ -7,6 +7,7 @@ import tqs.myvet.entities.Appointment;
 public interface AppointmentService {
     Appointment getAppointmentById(Long id);
     Appointment saveAppointment(Appointment appointment);
+    Appointment updateAppointment(Long id, Appointment appointment);
     void deleteAppointment(Long id);
 
     List<Appointment> getAllAppointments();

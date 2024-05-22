@@ -138,7 +138,7 @@ class UserController_WithMockServiceTest {
 
         mvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(dto)))
+                .content(Utils.toJson(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(dto.getName())))
                 .andExpect(jsonPath("$.email", is(dto.getEmail())))
@@ -161,7 +161,7 @@ class UserController_WithMockServiceTest {
 
         mvc.perform(put("/api/users/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(dto)))
+                .content(Utils.toJson(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(dto.getName())))
                 .andExpect(jsonPath("$.email", is(dto.getEmail())))
@@ -183,7 +183,7 @@ class UserController_WithMockServiceTest {
 
         mvc.perform(put("/api/users/-1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(dto)))
+                .content(Utils.toJson(dto)))
                 .andExpect(status().isNotFound());
 
         verify(userService, times(1)).updateUser(-1L, dto);

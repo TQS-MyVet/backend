@@ -9,9 +9,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import tqs.myvet.controllers.AppointmentRestController;
 import org.junit.jupiter.api.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mockito.Mockito;
+
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -20,15 +22,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.*;
 import org.springframework.http.MediaType;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
-
 import tqs.myvet.entities.User;
 import tqs.myvet.entities.Appointment;
 import tqs.myvet.services.AppointmentService;
 
 @WebMvcTest(AppointmentRestController.class)
-public class AppointmentControllerTest {
+class AppointmentControllerTest {
     
     @Autowired
     private MockMvc mvc;
@@ -38,11 +40,14 @@ public class AppointmentControllerTest {
 
     private List<Appointment> appointments;
 
+    User doctor = new User();
+    LocalDateTime now = LocalDateTime.now();
+    
     @BeforeEach
     void setUp() {
         appointments = new ArrayList<>();
-        appointments.add(new Appointment(1L, LocalDateTime.now(), "Consultation", "The dog is sick", new User()));
-        appointments.add(new Appointment(2L, LocalDateTime.now(), "Operation", "The dog needs surgery", new User()));
+        appointments.add(new Appointment(1L, now, "Consultation", "The dog is sick", doctor));
+        appointments.add(new Appointment(2L, now, "Operation", "The dog needs surgery", doctor));
     }
 
     @Test
@@ -122,21 +127,17 @@ public class AppointmentControllerTest {
 
     @Test
     void whenCreateAppointment_thenReturnCreated() throws Exception {
-        User doctor = new User();
-        Appointment appointment = new Appointment(3L, LocalDateTime.now(), "Consultation", "The dog is sick", doctor);
-        Appointment createdAppointment = new Appointment(3L, LocalDateTime.now(), "Consultation", "The dog is sick", doctor);
-        createdAppointment.setId(1L);
+        Appointment appointment = new Appointment(3L, now, "Consultation", "The dog is sick", doctor);
 
-        when(appointmentService.saveAppointment(appointment)).thenReturn(createdAppointment);
-
+        when(appointmentService.saveAppointment(Mockito.any())).thenReturn(appointment);
         mvc.perform(post("/api/appointments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtils.toJson(appointment)))
+                .content(Utils.toJson(appointment)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.id", is(3)))
                 .andExpect(jsonPath("$.type", is(appointment.getType())));
 
-        verify(appointmentService, times(1)).saveAppointment(appointment);
+        verify(appointmentService, times(1)).saveAppointment(Mockito.any());
     }
 
     @Test
@@ -163,50 +164,46 @@ public class AppointmentControllerTest {
 
     @Test
     void whenUpdateAppointment_thenReturnUpdated() throws Exception {
-        User doctor = new User();
-        Appointment appointment = new Appointment(1L, LocalDateTime.now(), "Consultation", "The dog is sick", doctor);
-        Appointment updatedAppointment = new Appointment(1L, LocalDateTime.now(), "Operation", "The dog needs surgery", doctor);
+        Appointment updatedAppointment = new Appointment(1L, now, "Operation", "The dog needs surgery", doctor);
 
-        when(appointmentService.saveAppointment(appointment)).thenReturn(updatedAppointment);
 
-        mvc.perform(put("/api/appointments")
+        when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(updatedAppointment);
+
+        mvc.perform(put("/api/appointments/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtils.toJson(appointment)))
+                .content(Utils.toJson(updatedAppointment)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.type", is(updatedAppointment.getType())));
 
-        verify(appointmentService, times(1)).saveAppointment(appointment);
+        verify(appointmentService, times(1)).updateAppointment(Mockito.any(), Mockito.any());
     }
 
     @Test
     void whenUpdateNonExistentAppointment_thenReturnNotFound() throws Exception {
-        User doctor = new User();
-        Appointment appointment = new Appointment(-99L, LocalDateTime.now(), "Consultation", "The dog is sick", doctor);
+        Appointment appointment = new Appointment(-99L, now, "Consultation", "The dog is sick", doctor);
 
-        when(appointmentService.saveAppointment(appointment)).thenReturn(null);
+        when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(null);
 
-        mvc.perform(put("/api/appointments")
+        mvc.perform(put("/api/appointments/-1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtils.toJson(appointment)))
+                .content(Utils.toJson(appointment)))
                 .andExpect(status().isNotFound());
 
-        verify(appointmentService, times(1)).saveAppointment(appointment);
+        verify(appointmentService, times(1)).updateAppointment(Mockito.any(), Mockito.any());
     }
 
     @Test
     void whenUpdateAppointmentWithNonExistentDoctor_thenReturnNotFound() throws Exception {
-        User doctor = new User();
-        Appointment appointment = new Appointment(1L, LocalDateTime.now(), "Consultation", "The dog is sick", doctor);
-        Appointment updatedAppointment = new Appointment(1L, LocalDateTime.now(), "Operation", "The dog needs surgery", doctor);
+        Appointment updatedAppointment = new Appointment(1L, now, "Operation", "The dog needs surgery", null);
 
-        when(appointmentService.saveAppointment(appointment)).thenReturn(null);
+        when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(null);
 
-        mvc.perform(put("/api/appointments")
+        mvc.perform(put("/api/appointments/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtils.toJson(appointment)))
+                .content(Utils.toJson(updatedAppointment)))
                 .andExpect(status().isNotFound());
 
-        verify(appointmentService, times(1)).saveAppointment(appointment);
+        verify(appointmentService, times(1)).updateAppointment(Mockito.any(), Mockito.any());
     }
     
 }

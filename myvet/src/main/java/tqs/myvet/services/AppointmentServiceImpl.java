@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import tqs.myvet.entities.Appointment;
 import tqs.myvet.repositories.AppointmentRepository;
 import java.time.LocalDateTime;
@@ -22,11 +23,30 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    @Transactional
     public Appointment saveAppointment(Appointment appointment) {
         return appointmentRepository.save(appointment);
     }
 
     @Override
+    @Transactional
+    public Appointment updateAppointment(Long id, Appointment appointment) {
+        Appointment appointmentToUpdate = appointmentRepository.findById(id).orElse(null);
+
+        if (appointmentToUpdate == null) {
+            return null;
+        }
+
+        appointmentToUpdate.setDate(appointment.getDate());
+        appointmentToUpdate.setType(appointment.getType());
+        appointmentToUpdate.setDocNotes(appointment.getDocNotes());
+        appointmentToUpdate.setUser(appointment.getUser());
+
+        return appointmentRepository.save(appointmentToUpdate);
+    }
+
+    @Override
+    @Transactional
     public void deleteAppointment(Long id) {
         appointmentRepository.deleteById(id);
     }

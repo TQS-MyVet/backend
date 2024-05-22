@@ -13,7 +13,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -138,7 +137,7 @@ class PetController_WithMockServiceTest {
 
         mvc.perform(post("/api/pets")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtils.toJson(newPet)))
+                .content(Utils.toJson(newPet)))
                 .andExpect(status().isCreated())
 
                 .andExpect(jsonPath("$.name", is(newPet.getName())));

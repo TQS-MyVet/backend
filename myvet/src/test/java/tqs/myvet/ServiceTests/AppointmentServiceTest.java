@@ -121,15 +121,17 @@ class AppointmentServiceTest {
     void testUpdateAppointment() {
         User doctor = new User();
         Appointment ap = new Appointment(1L, now, "Consultation", "The dog is sick", doctor);
-        Appointment updateAp = new Appointment(1L, now, "Consultation", "The dog is sick", doctor);
+        Mockito.when(appointmentRepository.save(Mockito.any())).thenReturn(ap);
 
-        updateAp.setType("Operation");
-        
-        Mockito.when(appointmentRepository.save(ap)).thenReturn(updateAp);
+        appointmentService.saveAppointment(ap);
 
-        Appointment savedAp = appointmentService.saveAppointment(ap);
+        Appointment updateAp = new Appointment(1L, now, "Operation", "The dog is sick", doctor);
+                
+        Mockito.when(appointmentRepository.save(Mockito.any())).thenReturn(updateAp);
+
+        Appointment savedAp = appointmentService.updateAppointment(1L, updateAp);
         assertThat(savedAp.getType()).isEqualTo("Operation");
 
-        Mockito.verify(appointmentRepository, Mockito.times(1)).save(ap);
+        Mockito.verify(appointmentRepository, Mockito.times(2)).save(Mockito.any());
     }
 }
