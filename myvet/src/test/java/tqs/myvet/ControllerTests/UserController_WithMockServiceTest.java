@@ -27,7 +27,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import tqs.myvet.controllers.UserRestController;
 import tqs.myvet.entities.Pet;
@@ -143,7 +142,7 @@ class UserController_WithMockServiceTest {
 
         mvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(dto)))
+                .content(Utils.toJson(dto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is(dto.getName())))
                 .andExpect(jsonPath("$.email", is(dto.getEmail())))
@@ -168,7 +167,7 @@ class UserController_WithMockServiceTest {
 
         mvc.perform(put("/api/users/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(dto)))
+                .content(Utils.toJson(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(dto.getName())))
                 .andExpect(jsonPath("$.email", is(dto.getEmail())))
@@ -190,7 +189,7 @@ class UserController_WithMockServiceTest {
 
         mvc.perform(put("/api/users/-1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(dto)))
+                .content(Utils.toJson(dto)))
                 .andExpect(status().isNotFound());
 
         verify(userService, times(1)).updateUser(eq(-1L), any(UpdateUserDTO.class));
