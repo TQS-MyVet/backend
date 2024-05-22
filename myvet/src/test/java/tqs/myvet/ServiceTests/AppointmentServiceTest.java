@@ -57,6 +57,8 @@ class AppointmentServiceTest {
     void testGetAllAppointments() {
         List<Appointment> allAppointments = appointmentService.getAllAppointments();
         assertThat(allAppointments).hasSize(2);
+
+        Mockito.verify(appointmentRepository, Mockito.times(1)).findAll();
     }
 
     @Test
@@ -65,6 +67,8 @@ class AppointmentServiceTest {
         Appointment ap1 = appointmentService.getAppointmentById(1L);
         assertThat(ap1.getId()).isEqualTo(1L);
         assertThat(ap1.getType()).isEqualTo("Consultation");
+
+        Mockito.verify(appointmentRepository, Mockito.times(1)).findById(1L);
     }
 
     @Test
@@ -73,6 +77,8 @@ class AppointmentServiceTest {
         Appointment ap = appointmentService.getAppointmentById(-99L);
 
         assertThat(ap).isNull();
+
+        Mockito.verify(appointmentRepository, Mockito.times(1)).findById(-99L);
     }
 
     @Test
@@ -80,6 +86,8 @@ class AppointmentServiceTest {
     void testGetAppointmentsByDate() {
         List<Appointment> appointments = appointmentService.getAppointmentsByDate(now);
         assertThat(appointments).hasSize(2);
+
+        Mockito.verify(appointmentRepository, Mockito.times(1)).findByDate(now);
     }
 
     @Test
@@ -87,6 +95,8 @@ class AppointmentServiceTest {
     void testGetAppointmentsByType() {
         List<Appointment> appointments = appointmentService.getAppointmentsByType("Consultation");
         assertThat(appointments).hasSize(1);
+
+        Mockito.verify(appointmentRepository, Mockito.times(1)).findByType("Consultation");
     }
 
     @Test
@@ -102,6 +112,8 @@ class AppointmentServiceTest {
 
         Appointment savedAp = appointmentService.saveAppointment(ap);
         assertThat(savedAp.getId()).isEqualTo(1L);
+
+        Mockito.verify(appointmentRepository, Mockito.times(1)).save(ap);
     }
 
     @Test
@@ -117,5 +129,7 @@ class AppointmentServiceTest {
 
         Appointment savedAp = appointmentService.saveAppointment(ap);
         assertThat(savedAp.getType()).isEqualTo("Operation");
+
+        Mockito.verify(appointmentRepository, Mockito.times(1)).save(ap);
     }
 }

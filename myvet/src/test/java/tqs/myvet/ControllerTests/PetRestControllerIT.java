@@ -140,7 +140,7 @@ public class PetRestControllerIT {
 
         mvc.perform(post("/api/pets")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(newPet)))
+                .content(JsonUtils.toJson(newPet)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is(newPet.getName())));
     }
