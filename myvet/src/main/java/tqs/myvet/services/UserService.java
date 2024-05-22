@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
+import tqs.myvet.entities.DTO.CreateUserDTO;
 
 public interface UserService {
 
@@ -14,9 +15,11 @@ public interface UserService {
 
     public List<Pet> getUserPets(Long id);
 
-    public User createUser(User user);
+    public User createUser(CreateUserDTO user);
 
     public User updateUser(long id, User updatedUser);
 
     public void deleteUser(long id);
+
+    public List<User> getAllUsers();
 }

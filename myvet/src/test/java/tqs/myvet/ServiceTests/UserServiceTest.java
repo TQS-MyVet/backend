@@ -16,9 +16,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
+import tqs.myvet.entities.DTO.CreateUserDTO;
 import tqs.myvet.repositories.UserRepository;
 import tqs.myvet.services.UserServiceImpl;
 
@@ -27,6 +30,9 @@ class UserServiceTest {
 
     @Mock(lenient = true)
     private UserRepository userRepository;
+
+    @Mock
+    private JavaMailSender emailSender;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -94,20 +100,27 @@ class UserServiceTest {
     @Test
     @DisplayName("Test create user")
     void testCreateUser() {
+        CreateUserDTO dto = new CreateUserDTO();
+        dto.setName("Maria Silva");
+        dto.setEmail("maria@gmail.com");
+        dto.setPhone(919165005);
+
         User user = new User();
-        user.setId(2L);
-        user.setName("Maria Silva");
-        user.setEmail("maria@gmail.com");
-        user.setPhone(919165005);
-        user.setPassword("batata123");
-        user.setRoles(Arrays.asList("ROLE_USER"));
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setRoles(Arrays.asList("USER"));
 
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+        Mockito.doNothing().when(emailSender).send(any(SimpleMailMessage.class));
+        Mockito.when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User saved = userService.createUser(user);
+        User saved = userService.createUser(dto);
 
         assertThat(saved).isNotNull();
         assertEquals("Maria Silva", saved.getName());
+        assertEquals("maria@gmail.com", saved.getEmail());
+        assertEquals(919165005, saved.getPhone());
+        assertEquals(Arrays.asList("USER"), saved.getRoles());
     }
 
     @Test
