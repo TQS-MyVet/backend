@@ -26,6 +26,12 @@ class PetRepositoryTest {
         pet.setSex("M");
         pet.setBirthdate("2021-05-05");
         pet.setSpecies("Dog");
+
+        Pet flushedPet = entityManager.persistAndFlush(pet);
+
+        Pet FoundPet = petRepository.findById(flushedPet.getId()).get();
+
+        assertThat(FoundPet.getName()).isEqualTo(pet.getName());
     }
 
     @Test

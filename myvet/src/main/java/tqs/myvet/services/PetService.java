@@ -11,5 +11,4 @@ public interface PetService {
     List<Pet> getAllPets();
     List<Pet> getPetsByName(String name);
     List<Pet> getPetsBySpecies(String species);
-    
 }
