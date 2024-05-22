@@ -61,8 +61,7 @@ class PetRestControllerIT {
     @Test
     void whenGetPetById_thenReturnPet() throws Exception {
         Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
-        Pet pettest = repository.save(pet);
-        System.out.println(pettest.getId());
+        repository.save(pet);
         
         mvc.perform(get("/api/pets/1")
                 .contentType(MediaType.APPLICATION_JSON))
