@@ -3,19 +3,29 @@ package tqs.myvet.services;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
+import tqs.myvet.entities.DTO.CreateUserDTO;
 import tqs.myvet.repositories.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final JavaMailSender emailSender;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    @Value("${spring.mail.username}")
+    private String fromEmail;
+
+    public UserServiceImpl(UserRepository userRepository, JavaMailSender emailSender) {
         this.userRepository = userRepository;
+        this.emailSender = emailSender;
     }
 
     @Override
@@ -40,9 +50,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
-        // TODO: generate password, encode it and generate the email
-        return userRepository.save(user);
+    public User createUser(CreateUserDTO user) {
+        User newUser = new User();
+        newUser.setName(user.getName());
+        newUser.setEmail(user.getEmail());
+        newUser.setPhone(user.getPhone());
+        newUser.setRoles(Arrays.asList("USER"));
+
+        UUID uuid = UUID.randomUUID();
+
+        String password = uuid.toString().replace("-", "");
+        password = password.substring(0, 16);
+        newUser.setPassword(password);
+
+        generateEmail(newUser, password);
+
+        return userRepository.save(newUser);
     }
 
     @Override
@@ -69,4 +92,23 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
+    private void generateEmail(User user, String password) {
+        String emailContent = "Dear " + user.getName() + ",\n\n"
+                + "Welcome to MyVet! We are glad to have you as a new user.\n\n"
+                + "Your password is: " + password + "\n\n"
+                + "Best regards,\n"
+                + "MyVet Team";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(user.getEmail());
+        message.setSubject("Password of MyVet Account");
+        message.setText(emailContent);
+
+        emailSender.send(message);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }
