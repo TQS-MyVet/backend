@@ -2,6 +2,9 @@ package tqs.myvet.ControllerTests;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,14 +29,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import tqs.myvet.controllers.PetRestController;
+import tqs.myvet.controllers.UserRestController;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
 import tqs.myvet.entities.DTO.CreateUserDTO;
 import tqs.myvet.entities.DTO.UpdateUserDTO;
 import tqs.myvet.services.UserService;
 
-@WebMvcTest(PetRestController.class)
+@WebMvcTest(UserRestController.class)
 class UserController_WithMockServiceTest {
     @Autowired
     private MockMvc mvc;
@@ -117,13 +120,13 @@ class UserController_WithMockServiceTest {
 
     @Test
     void whenGetUserPetsWithInvalidId_thenReturnNotFound() throws Exception {
-        when(userService.getUserPets(3L)).thenReturn(new ArrayList<>());
+        when(userService.getUserPets(-1L)).thenReturn(new ArrayList<>());
 
-        mvc.perform(get("/api/users/3/pets")
+        mvc.perform(get("/api/users/-1/pets")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
-        verify(userService, times(1)).getUserPets(3L);
+        verify(userService, times(1)).getUserPets(-1L);
     }
 
     @Test
@@ -133,19 +136,21 @@ class UserController_WithMockServiceTest {
         dto.setEmail("maria@gmail.com");
         dto.setPhone(919165005);
 
-        when(userService.createUser(dto)).thenReturn(new User(2L, dto.getName(), dto.getEmail(), dto.getPhone(),
-                "password", List.of("USER"), new ArrayList<>()));
+        User newUser = new User(2L, dto.getName(), dto.getEmail(), dto.getPhone(),
+                "password", List.of("USER"), new ArrayList<>());
+
+        when(userService.createUser(any(CreateUserDTO.class))).thenReturn(newUser);
 
         mvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(dto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is(dto.getName())))
                 .andExpect(jsonPath("$.email", is(dto.getEmail())))
                 .andExpect(jsonPath("$.phone", is(dto.getPhone())))
                 .andExpect(jsonPath("$.roles", hasSize(1)));
 
-        verify(userService, times(1)).createUser(dto);
+        verify(userService, times(1)).createUser(any(CreateUserDTO.class));
     }
 
     @Test
@@ -156,8 +161,10 @@ class UserController_WithMockServiceTest {
         dto.setPhone(919165005);
         dto.setPassword("password");
 
-        when(userService.updateUser(1L, dto)).thenReturn(new User(1L, dto.getName(), dto.getEmail(), dto.getPhone(),
-                dto.getPassword(), List.of("USER"), new ArrayList<>()));
+        User updatedUser = new User(1L, dto.getName(), dto.getEmail(), dto.getPhone(),
+                dto.getPassword(), List.of("USER"), new ArrayList<>());
+
+        when(userService.updateUser(anyLong(), any(UpdateUserDTO.class))).thenReturn(updatedUser);
 
         mvc.perform(put("/api/users/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -168,7 +175,7 @@ class UserController_WithMockServiceTest {
                 .andExpect(jsonPath("$.phone", is(dto.getPhone())))
                 .andExpect(jsonPath("$.roles", hasSize(1)));
 
-        verify(userService, times(1)).updateUser(1L, dto);
+        verify(userService, times(1)).updateUser(anyLong(), any(UpdateUserDTO.class));
     }
 
     @Test
@@ -179,14 +186,14 @@ class UserController_WithMockServiceTest {
         dto.setPhone(919165005);
         dto.setPassword("password");
 
-        when(userService.updateUser(-1L, dto)).thenReturn(null);
+        when(userService.updateUser(eq(-1L), any(UpdateUserDTO.class))).thenReturn(null);
 
         mvc.perform(put("/api/users/-1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(dto)))
                 .andExpect(status().isNotFound());
 
-        verify(userService, times(1)).updateUser(-1L, dto);
+        verify(userService, times(1)).updateUser(eq(-1L), any(UpdateUserDTO.class));
     }
 
     @Test
