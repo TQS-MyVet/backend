@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
 import tqs.myvet.entities.DTO.CreateUserDTO;
+import tqs.myvet.entities.DTO.UpdateUserDTO;
 import tqs.myvet.repositories.UserRepository;
 
 @Service
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(long id, User updatedUser) {
+    public User updateUser(long id, UpdateUserDTO updatedUser) {
         Optional<User> user = userRepository.findById(id);
 
         if (user.isPresent()) {
@@ -79,7 +80,6 @@ public class UserServiceImpl implements UserService {
             updated.setEmail(updatedUser.getEmail());
             updated.setPhone(updatedUser.getPhone());
             updated.setPassword(updatedUser.getPassword());
-            updated.setRoles(updatedUser.getRoles());
 
             return userRepository.save(updated);
         } else {

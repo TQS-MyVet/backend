@@ -22,6 +22,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
 import tqs.myvet.entities.DTO.CreateUserDTO;
+import tqs.myvet.entities.DTO.UpdateUserDTO;
 import tqs.myvet.repositories.UserRepository;
 import tqs.myvet.services.UserServiceImpl;
 
@@ -38,12 +39,14 @@ class UserServiceTest {
     private UserServiceImpl userService;
 
     private User user;
+    private Pet pet;
+    private Pet pet2;
 
     @BeforeEach
     void setUp() {
-        Pet pet = new Pet(1L, "Bobi", "Masculino", "15/05/2009", "Cão");
-        Pet pet2 = new Pet(2L, "Mimi", "Feminino", "15/05/2010", "Gato");
-        user = new User(1L, "José Silva", "jose@gmail.com", 919165004, "batata123", Arrays.asList("ROLE_USER"),
+        pet = new Pet(1L, "Bobi", "Masculino", "15/05/2009", "Cão");
+        pet2 = new Pet(2L, "Mimi", "Feminino", "15/05/2010", "Gato");
+        user = new User(1L, "José Silva", "jose@gmail.com", 919165004, "batata123", Arrays.asList("USER"),
                 Arrays.asList(pet, pet2));
 
         Mockito.when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
@@ -126,16 +129,15 @@ class UserServiceTest {
     @Test
     @DisplayName("Test update user")
     void testUpdateUser() {
-        User updatedUser = new User();
-        updatedUser.setId(1L);
+        UpdateUserDTO updatedUser = new UpdateUserDTO();
         updatedUser.setName("Zezinho Silva");
         updatedUser.setEmail("ze@gmail.com");
         updatedUser.setPhone(919165006);
         updatedUser.setPassword("batata123");
-        updatedUser.setRoles(Arrays.asList("ROLE_USER"));
 
-        Mockito.when(userRepository.findById(updatedUser.getId())).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.save(any(User.class))).thenReturn(new User(1L, "Zezinho Silva", "ze@gmail.com",
+                919165006, "batata123", Arrays.asList("USER"), Arrays.asList(pet, pet2)));
 
         User updated = userService.updateUser(1L, updatedUser);
 
@@ -147,17 +149,15 @@ class UserServiceTest {
     @Test
     @DisplayName("Test update user with invalid id")
     void testUpdateUserWithInvalidId() {
-        User updatedUser = new User();
-        updatedUser.setId(-1L);
+        UpdateUserDTO updatedUser = new UpdateUserDTO();
         updatedUser.setName("Zezinho Silva");
         updatedUser.setEmail("ze@gmail.com");
         updatedUser.setPhone(919165006);
         updatedUser.setPassword("batata123");
-        updatedUser.setRoles(Arrays.asList("ROLE_USER"));
 
-        Mockito.when(userRepository.findById(updatedUser.getId())).thenReturn(Optional.empty());
+        Mockito.when(userRepository.findById(-1L)).thenReturn(Optional.empty());
 
-        User updated = userService.updateUser(updatedUser.getId(), updatedUser);
+        User updated = userService.updateUser(-1L, updatedUser);
 
         assertThat(updated).isNull();
 
