@@ -15,6 +15,8 @@ import tqs.myvet.services.AppointmentService;
 @RequestMapping("/api/appointments")
 public class AppointmentRestController {
     private final AppointmentService appointmentService;
+    
+    String appointmentNotFound = "Appointment not found";
 
     public AppointmentRestController(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
@@ -31,7 +33,7 @@ public class AppointmentRestController {
         Appointment appointment = appointmentService.getAppointmentById(id);
 
         if (appointment == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, appointmentNotFound);
         }
 
         return new ResponseEntity<>(appointment, HttpStatus.OK);
@@ -77,7 +79,7 @@ public class AppointmentRestController {
         Appointment updatedAppointment = appointmentService.updateAppointment(id, appointment);
 
         if (updatedAppointment == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, appointmentNotFound);
         }
 
         return new ResponseEntity<>(updatedAppointment, HttpStatus.OK);
@@ -89,7 +91,7 @@ public class AppointmentRestController {
             appointmentService.deleteAppointment(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, appointmentNotFound);
         }
     }
 }
