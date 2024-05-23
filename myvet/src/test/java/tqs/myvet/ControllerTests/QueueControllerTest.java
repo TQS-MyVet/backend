@@ -50,7 +50,21 @@ class QueueControllerTest {
     }
 
     @Test
-    void c_WhenGetQueues_thenReturnQueues() throws Exception {
+    void c_WhentPostToReceptionistQueue_andUserExistThenError() throws Exception {
+        mvc.perform(post("/api/queues/receptionist/1")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict());
+    }
+
+    @Test
+    void d_WhentPostToReceptionistQueue_andUserExistThenError() throws Exception {
+        mvc.perform(post("/api/queues/doctor/2")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict());
+    }
+
+    @Test
+    void e_WhenGetQueues_thenReturnQueues() throws Exception {
         mvc.perform(get("/api/queues")
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -58,7 +72,7 @@ class QueueControllerTest {
     }
 
     @Test
-    void d_WhenGetUserFromRecQueue_thenReturnUserPos() throws Exception {
+    void f_WhenGetUserFromRecQueue_thenReturnUserPos() throws Exception {
         mvc.perform(get("/api/queues/receptionist/1")
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -68,7 +82,7 @@ class QueueControllerTest {
     }
 
     @Test
-    void e_WhenGetUserFromDocQueue_thenReturnUserPos() throws Exception {
+    void g_WhenGetUserFromDocQueue_thenReturnUserPos() throws Exception {
         mvc.perform(get("/api/queues/doctor/2")
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -78,18 +92,45 @@ class QueueControllerTest {
     }
 
     @Test
-    void f_WhenDeleteReceptionist_thenRemoveHead() throws Exception {
+    void h_WhenDeleteReceptionist_thenRemoveHead() throws Exception {
         mvc.perform(delete("/api/queues/receptionist")
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }
 
     @Test
-    void g_WhenDeleteReceptionist_thenRemoveHead() throws Exception {
+    void i_WhenDeleteReceptionist_thenRemoveHead() throws Exception {
         mvc.perform(delete("/api/queues/doctor")
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }
 
+    @Test
+    void j_WhenDeleteReceptionist_andIsEmptythenError() throws Exception {
+        mvc.perform(delete("/api/queues/receptionist")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void k_WhenDeleteDoctor_andIsEmptythenError() throws Exception {
+        mvc.perform(delete("/api/queues/doctor")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void l_WhenGetUserFromRecQueue_andUserNotInQueueThenError() throws Exception {
+        mvc.perform(get("/api/queues/receptionist/-99")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void m_WhenGetUserFromDocQueue_andUserNotInQueueThenError() throws Exception {
+        mvc.perform(get("/api/queues/doctor/-99")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
     
 }
