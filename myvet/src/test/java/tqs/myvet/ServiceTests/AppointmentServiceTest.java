@@ -85,10 +85,10 @@ class AppointmentServiceTest {
     @Test
     @DisplayName("Test get appointments by date")
     void testGetAppointmentsByDate() {
-        List<Appointment> appointments = appointmentService.getAppointmentsByDate(now);
+        List<Appointment> appointments = appointmentService.getAppointmentsByStartDate(now);
         assertThat(appointments).hasSize(2);
 
-        Mockito.verify(appointmentRepository, Mockito.times(1)).findByDate(now);
+        Mockito.verify(appointmentRepository, Mockito.times(1)).findByStartDate(now);
     }
 
     @Test
