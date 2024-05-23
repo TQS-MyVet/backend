@@ -48,7 +48,7 @@ class UserRestControllerIT {
 
     @Test
     void whenGetUsersByName_thenReturnUsers() throws Exception {
-        User user = new User(1L, "José Silva", "jose@gmail.com", 919165004, "batata123", List.of("USER"),
+        User user = new User(1L, "José Silva", "jose@gmail.com", "919165004", "batata123", List.of("USER"),
                 List.of());
 
         repository.save(user);
@@ -71,7 +71,7 @@ class UserRestControllerIT {
 
     @Test
     void whenGetUserDetails_thenReturnUser() throws Exception {
-        User user = new User(null, "José Silva", "jose@gmail.com", 919165004, "batata123", List.of("USER"),
+        User user = new User(null, "José Silva", "jose@gmail.com", "919165004", "batata123", List.of("USER"),
                 List.of());
 
         User savedUser = repository.save(user);
@@ -97,7 +97,7 @@ class UserRestControllerIT {
         petRepository.save(pet1);
         petRepository.save(pet2);
 
-        User user = new User(null, "José Silva", "jose@gmail.com", 919165004, "batata123", List.of("USER"),
+        User user = new User(null, "José Silva", "jose@gmail.com", "919165004", "batata123", List.of("USER"),
                 List.of(pet1, pet2));
 
         User savedUser = repository.save(user);
@@ -122,7 +122,7 @@ class UserRestControllerIT {
         CreateUserDTO dto = new CreateUserDTO();
         dto.setName("Maria Silva");
         dto.setEmail("maria@gmail.com");
-        dto.setPhone(919165005);
+        dto.setPhone("919165005");
 
         mvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +136,7 @@ class UserRestControllerIT {
 
     @Test
     void whenUpdateUser_thenReturnUser() throws Exception {
-        User user = new User(null, "José Silva", "jose@gmail.com", 919165004, "batata123", List.of("USER"),
+        User user = new User(null, "José Silva", "jose@gmail.com", "919165004", "batata123", List.of("USER"),
                 List.of());
 
         User savedUser = repository.save(user);
@@ -144,7 +144,7 @@ class UserRestControllerIT {
         UpdateUserDTO dto = new UpdateUserDTO();
         dto.setName("Maria Silva");
         dto.setEmail("maria@gmail.com");
-        dto.setPhone(919165005);
+        dto.setPhone("919165005");
         dto.setPassword("password");
 
         mvc.perform(put("/api/users/" + savedUser.getId())
@@ -162,7 +162,7 @@ class UserRestControllerIT {
         UpdateUserDTO dto = new UpdateUserDTO();
         dto.setName("Maria Silva");
         dto.setEmail("maria@gmail.com");
-        dto.setPhone(919165005);
+        dto.setPhone("919165005");
         dto.setPassword("password");
 
         mvc.perform(put("/api/users/-1")
@@ -180,8 +180,9 @@ class UserRestControllerIT {
 
     @Test
     void whenGetAllUsers_thenReturnUsers() throws Exception {
-        List<User> users = List.of(new User(1L, "José Silva", "jose@gmail.com", 919165004, "batata123", List.of("USER"),
-                List.of()));
+        List<User> users = List
+                .of(new User(1L, "José Silva", "jose@gmail.com", "919165004", "batata123", List.of("USER"),
+                        List.of()));
 
         repository.saveAll(users);
 

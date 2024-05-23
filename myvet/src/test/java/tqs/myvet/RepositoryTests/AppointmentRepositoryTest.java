@@ -1,9 +1,9 @@
 package tqs.myvet.RepositoryTests;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +11,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import tqs.myvet.entities.Appointment;
+import tqs.myvet.entities.User;
 import tqs.myvet.repositories.AppointmentRepository;
 import tqs.myvet.repositories.UserRepository;
-import tqs.myvet.entities.User;
 
 @DataJpaTest
 class AppointmentRepositoryTest {
@@ -31,7 +31,7 @@ class AppointmentRepositoryTest {
         User user = new User();
         user.setName("John doe");
         user.setEmail("johndoe@test.com");
-        user.setPhone(910000000);
+        user.setPhone("910000000");
         user.setPassword("password");
         user.setRoles(List.of("role1", "role2"));
         userRepository.saveAndFlush(user);
@@ -41,7 +41,6 @@ class AppointmentRepositoryTest {
         appointment.setDocNotes("The dog is sick");
         appointment.setUser(user);
 
-        
         entityManager.persistAndFlush(appointment);
 
         Appointment found = appointmentRepository.findById(appointment.getId()).get();
@@ -60,7 +59,7 @@ class AppointmentRepositoryTest {
         User user = new User();
         user.setName("John doe");
         user.setEmail("johndoe@test.com");
-        user.setPhone(910000000);
+        user.setPhone("910000000");
         user.setPassword("password");
         user.setRoles(List.of("role1", "role2"));
         userRepository.saveAndFlush(user);
@@ -82,7 +81,7 @@ class AppointmentRepositoryTest {
         appointment3.setType("Consultation");
         appointment3.setDocNotes("The dog is dead");
         appointment3.setUser(user);
-        
+
         entityManager.persist(appointment1);
         entityManager.persist(appointment2);
         entityManager.persist(appointment3);
@@ -90,8 +89,8 @@ class AppointmentRepositoryTest {
 
         List<Appointment> allAppointments = appointmentRepository.findAll();
 
-        assertThat(allAppointments).hasSize(3).extracting(Appointment::getDate).containsOnly(appointment1.getDate(), appointment2.getDate(), appointment3.getDate());
+        assertThat(allAppointments).hasSize(3).extracting(Appointment::getDate).containsOnly(appointment1.getDate(),
+                appointment2.getDate(), appointment3.getDate());
     }
 
 }
-

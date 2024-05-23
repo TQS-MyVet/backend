@@ -27,7 +27,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-
 import tqs.myvet.controllers.UserRestController;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
@@ -50,7 +49,7 @@ class UserController_WithMockServiceTest {
         users = new ArrayList<>();
         Pet pet1 = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
         Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat");
-        users.add(new User(1L, "José Silva", "jose@gmail.com", 919165004, "batata123", List.of("USER"),
+        users.add(new User(1L, "José Silva", "jose@gmail.com", "919165004", "batata123", List.of("USER"),
                 List.of(pet1, pet2)));
     }
 
@@ -133,7 +132,7 @@ class UserController_WithMockServiceTest {
         CreateUserDTO dto = new CreateUserDTO();
         dto.setName("Maria Silva");
         dto.setEmail("maria@gmail.com");
-        dto.setPhone(919165005);
+        dto.setPhone("919165005");
 
         User newUser = new User(2L, dto.getName(), dto.getEmail(), dto.getPhone(),
                 "password", List.of("USER"), new ArrayList<>());
@@ -157,7 +156,7 @@ class UserController_WithMockServiceTest {
         UpdateUserDTO dto = new UpdateUserDTO();
         dto.setName("Maria Silva");
         dto.setEmail("maria@gmail.com");
-        dto.setPhone(919165005);
+        dto.setPhone("919165005");
         dto.setPassword("password");
 
         User updatedUser = new User(1L, dto.getName(), dto.getEmail(), dto.getPhone(),
@@ -182,7 +181,7 @@ class UserController_WithMockServiceTest {
         UpdateUserDTO dto = new UpdateUserDTO();
         dto.setName("Maria Silva");
         dto.setEmail("maria@gmail.com");
-        dto.setPhone(919165005);
+        dto.setPhone("919165005");
         dto.setPassword("password");
 
         when(userService.updateUser(eq(-1L), any(UpdateUserDTO.class))).thenReturn(null);
