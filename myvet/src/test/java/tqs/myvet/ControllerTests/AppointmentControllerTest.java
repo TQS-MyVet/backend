@@ -42,12 +42,13 @@ class AppointmentControllerTest {
 
     User doctor = new User();
     LocalDateTime now = LocalDateTime.now();
+    LocalDateTime later = now.plusHours(1);
     
     @BeforeEach
     void setUp() {
         appointments = new ArrayList<>();
-        appointments.add(new Appointment(1L, now, "Consultation", "The dog is sick", doctor));
-        appointments.add(new Appointment(2L, now, "Operation", "The dog needs surgery", doctor));
+        appointments.add(new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor));
+        appointments.add(new Appointment(2L, now, later, "Operation", "The dog needs surgery", doctor));
     }
 
     @Test
@@ -89,16 +90,16 @@ class AppointmentControllerTest {
 
     @Test
     void whenGetAppointmentsByDate_thenReturnAppointments() throws Exception {
-        when(appointmentService.getAppointmentsByDate(appointments.get(0).getDate())).thenReturn(appointments);
+        when(appointmentService.getAppointmentsByStartDate(appointments.get(0).getStartDate())).thenReturn(List.of(appointments.get(0), appointments.get(1)));
 
-        mvc.perform(get("/api/appointments/date/" + appointments.get(0).getDate())
+        mvc.perform(get("/api/appointments/date/" + appointments.get(0).getStartDate())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].type", is(appointments.get(0).getType())))
                 .andExpect(jsonPath("$[1].type", is(appointments.get(1).getType())));
 
-        verify(appointmentService, times(1)).getAppointmentsByDate(appointments.get(0).getDate());
+        verify(appointmentService, times(1)).getAppointmentsByStartDate(appointments.get(0).getStartDate());
     }
 
     @Test
@@ -127,7 +128,7 @@ class AppointmentControllerTest {
 
     @Test
     void whenCreateAppointment_thenReturnCreated() throws Exception {
-        Appointment appointment = new Appointment(3L, now, "Consultation", "The dog is sick", doctor);
+        Appointment appointment = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor);
 
         when(appointmentService.saveAppointment(Mockito.any())).thenReturn(appointment);
         mvc.perform(post("/api/appointments")
@@ -164,7 +165,7 @@ class AppointmentControllerTest {
 
     @Test
     void whenUpdateAppointment_thenReturnUpdated() throws Exception {
-        Appointment updatedAppointment = new Appointment(1L, now, "Operation", "The dog needs surgery", doctor);
+        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery", doctor);
 
 
         when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(updatedAppointment);
@@ -180,7 +181,7 @@ class AppointmentControllerTest {
 
     @Test
     void whenUpdateNonExistentAppointment_thenReturnNotFound() throws Exception {
-        Appointment appointment = new Appointment(-99L, now, "Consultation", "The dog is sick", doctor);
+        Appointment appointment = new Appointment(-99L, now, later, "Consultation", "The dog is sick", doctor);
 
         when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(null);
 
@@ -194,7 +195,7 @@ class AppointmentControllerTest {
 
     @Test
     void whenUpdateAppointmentWithNonExistentDoctor_thenReturnNotFound() throws Exception {
-        Appointment updatedAppointment = new Appointment(1L, now, "Operation", "The dog needs surgery", null);
+        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery", null);
 
         when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(null);
 

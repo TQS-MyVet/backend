@@ -36,7 +36,8 @@ class AppointmentRepositoryTest {
         user.setRoles(List.of("role1", "role2"));
         userRepository.saveAndFlush(user);
         Appointment appointment = new Appointment();
-        appointment.setDate(LocalDateTime.now());
+        appointment.setStartDate(LocalDateTime.now());
+        appointment.setEndDate(LocalDateTime.now());
         appointment.setType("Consultation");
         appointment.setDocNotes("The dog is sick");
         appointment.setUser(user);
@@ -46,7 +47,8 @@ class AppointmentRepositoryTest {
 
         Appointment found = appointmentRepository.findById(appointment.getId()).get();
 
-        assertThat(found.getDate()).isEqualTo(appointment.getDate());
+        assertThat(found.getStartDate()).isEqualTo(appointment.getStartDate());
+        assertThat(found.getId()).isEqualTo(appointment.getId());
     }
 
     @Test
@@ -66,19 +68,22 @@ class AppointmentRepositoryTest {
         userRepository.saveAndFlush(user);
 
         Appointment appointment1 = new Appointment();
-        appointment1.setDate(LocalDateTime.now());
+        appointment1.setStartDate(LocalDateTime.now());
+        appointment1.setEndDate(LocalDateTime.now());
         appointment1.setType("Consultation");
         appointment1.setDocNotes("The dog is sick");
         appointment1.setUser(user);
 
         Appointment appointment2 = new Appointment();
-        appointment2.setDate(LocalDateTime.now());
+        appointment2.setStartDate(LocalDateTime.now());
+        appointment2.setEndDate(LocalDateTime.now());
         appointment2.setType("Consultation");
         appointment2.setDocNotes("The dog is sick");
         appointment2.setUser(user);
 
         Appointment appointment3 = new Appointment();
-        appointment3.setDate(LocalDateTime.now());
+        appointment3.setStartDate(LocalDateTime.now());
+        appointment3.setEndDate(LocalDateTime.now());
         appointment3.setType("Consultation");
         appointment3.setDocNotes("The dog is dead");
         appointment3.setUser(user);
@@ -90,7 +95,8 @@ class AppointmentRepositoryTest {
 
         List<Appointment> allAppointments = appointmentRepository.findAll();
 
-        assertThat(allAppointments).hasSize(3).extracting(Appointment::getDate).containsOnly(appointment1.getDate(), appointment2.getDate(), appointment3.getDate());
+        assertThat(allAppointments).hasSize(3).extracting(Appointment::getStartDate).containsOnly(appointment1.getStartDate(), appointment2.getStartDate(), appointment3.getStartDate());
+        assertThat(allAppointments).hasSize(3).extracting(Appointment::getId).containsOnly(appointment1.getId(), appointment2.getId(), appointment3.getId());
     }
 
 }

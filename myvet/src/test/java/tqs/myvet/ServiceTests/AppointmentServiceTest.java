@@ -23,6 +23,7 @@ import tqs.myvet.entities.*;
 class AppointmentServiceTest {
     
     LocalDateTime now = LocalDateTime.now();
+    LocalDateTime later = now.plusHours(1);
 
     @Mock
     private AppointmentRepository appointmentRepository;
@@ -35,8 +36,8 @@ class AppointmentServiceTest {
 
         User doctor = new User();
         
-        Appointment ap1 = new Appointment(1L, now, "Consultation", "The dog is sick", doctor);
-        Appointment ap2 = new Appointment(2L, now, "Operation", "The dog needs surgery", doctor);
+        Appointment ap1 = new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor);
+        Appointment ap2 = new Appointment(2L, now, later, "Operation", "The dog needs surgery", doctor);
 
         List<Appointment> allAppointments = List.of(ap1, ap2);
 
@@ -45,8 +46,8 @@ class AppointmentServiceTest {
         Mockito.lenient().when(appointmentRepository.findById(-99L)).thenReturn(Optional.empty());
         Mockito.lenient().when(appointmentRepository.findAll()).thenReturn(allAppointments);
 
-        Mockito.lenient().when(appointmentRepository.findByDate(ap1.getDate())).thenReturn(allAppointments);
-        Mockito.lenient().when(appointmentRepository.findByDate(ap2.getDate())).thenReturn(allAppointments);
+        Mockito.lenient().when(appointmentRepository.findByStartDate(ap1.getStartDate())).thenReturn(allAppointments);
+        Mockito.lenient().when(appointmentRepository.findByStartDate(ap2.getStartDate())).thenReturn(allAppointments);
 
         Mockito.lenient().when(appointmentRepository.findByType(ap1.getType())).thenReturn(List.of(ap1));
         Mockito.lenient().when(appointmentRepository.findByType(ap2.getType())).thenReturn(List.of(ap2));
@@ -103,8 +104,8 @@ class AppointmentServiceTest {
     @DisplayName("Create a new appointment")
     void testCreateAppointment() {
         User doctor = new User();
-        Appointment ap = new Appointment(3L, now, "Consultation", "The dog is sick", doctor);
-        Appointment createAp = new Appointment(3L, now, "Consultation", "The dog is sick", doctor);
+        Appointment ap = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor);
+        Appointment createAp = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor);
 
         createAp.setId(1L);
         
@@ -120,12 +121,12 @@ class AppointmentServiceTest {
     @DisplayName("Update an appointment")
     void testUpdateAppointment() {
         User doctor = new User();
-        Appointment ap = new Appointment(1L, now, "Consultation", "The dog is sick", doctor);
+        Appointment ap = new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor);
         Mockito.when(appointmentRepository.save(Mockito.any())).thenReturn(ap);
 
         appointmentService.saveAppointment(ap);
 
-        Appointment updateAp = new Appointment(1L, now, "Operation", "The dog is sick", doctor);
+        Appointment updateAp = new Appointment(1L, now, later, "Operation", "The dog is sick", doctor);
                 
         Mockito.when(appointmentRepository.save(Mockito.any())).thenReturn(updateAp);
 
