@@ -31,7 +31,7 @@ class AppointmentRepositoryTest {
         User user = new User();
         user.setName("John doe");
         user.setEmail("johndoe@test.com");
-        user.setPhone(910000000);
+        user.setPhone("910000000");
         user.setPassword("password");
         user.setRoles(List.of("role1", "role2"));
         userRepository.saveAndFlush(user);
@@ -60,7 +60,7 @@ class AppointmentRepositoryTest {
         User user = new User();
         user.setName("John doe");
         user.setEmail("johndoe@test.com");
-        user.setPhone(910000000);
+        user.setPhone("910000000");
         user.setPassword("password");
         user.setRoles(List.of("role1", "role2"));
         userRepository.saveAndFlush(user);

@@ -46,7 +46,7 @@ class UserServiceTest {
     void setUp() {
         pet = new Pet(1L, "Bobi", "Masculino", "15/05/2009", "Cão");
         pet2 = new Pet(2L, "Mimi", "Feminino", "15/05/2010", "Gato");
-        user = new User(1L, "José Silva", "jose@gmail.com", 919165004, "batata123", Arrays.asList("USER"),
+        user = new User(1L, "José Silva", "jose@gmail.com", "919165004", "batata123", Arrays.asList("USER"),
                 Arrays.asList(pet, pet2));
 
         Mockito.when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
@@ -106,7 +106,7 @@ class UserServiceTest {
         CreateUserDTO dto = new CreateUserDTO();
         dto.setName("Maria Silva");
         dto.setEmail("maria@gmail.com");
-        dto.setPhone(919165005);
+        dto.setPhone("919165005");
 
         User user = new User();
         user.setName(dto.getName());
@@ -122,7 +122,7 @@ class UserServiceTest {
         assertThat(saved).isNotNull();
         assertEquals("Maria Silva", saved.getName());
         assertEquals("maria@gmail.com", saved.getEmail());
-        assertEquals(919165005, saved.getPhone());
+        assertEquals("919165005", saved.getPhone());
         assertEquals(Arrays.asList("USER"), saved.getRoles());
     }
 
@@ -132,12 +132,12 @@ class UserServiceTest {
         UpdateUserDTO updatedUser = new UpdateUserDTO();
         updatedUser.setName("Zezinho Silva");
         updatedUser.setEmail("ze@gmail.com");
-        updatedUser.setPhone(919165006);
+        updatedUser.setPhone("919165006");
         updatedUser.setPassword("batata123");
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         Mockito.when(userRepository.save(any(User.class))).thenReturn(new User(1L, "Zezinho Silva", "ze@gmail.com",
-                919165006, "batata123", Arrays.asList("USER"), Arrays.asList(pet, pet2)));
+                "919165006", "batata123", Arrays.asList("USER"), Arrays.asList(pet, pet2)));
 
         User updated = userService.updateUser(1L, updatedUser);
 
@@ -152,7 +152,7 @@ class UserServiceTest {
         UpdateUserDTO updatedUser = new UpdateUserDTO();
         updatedUser.setName("Zezinho Silva");
         updatedUser.setEmail("ze@gmail.com");
-        updatedUser.setPhone(919165006);
+        updatedUser.setPhone("919165006");
         updatedUser.setPassword("batata123");
 
         Mockito.when(userRepository.findById(-1L)).thenReturn(Optional.empty());

@@ -27,7 +27,7 @@ class UserRepositoryTest {
         User user = new User();
         user.setName("Antony");
         user.setEmail("user@email.com");
-        user.setPhone(123456789);
+        user.setPhone("123456789");
         user.setPassword("password");
         user.setRoles(Arrays.asList("USER"));
 
@@ -49,21 +49,21 @@ class UserRepositoryTest {
         User user1 = new User();
         user1.setName("Antony");
         user1.setEmail("antony@mail.com");
-        user1.setPhone(123456789);
+        user1.setPhone("123456789");
         user1.setPassword("password");
         user1.setRoles(Arrays.asList("USER"));
 
         User user2 = new User();
         user2.setName("Antony");
         user2.setEmail("dada@faf.com");
-        user2.setPhone(123456789);
+        user2.setPhone("123456789");
         user2.setPassword("password");
         user2.setRoles(Arrays.asList("USER"));
 
         User user3 = new User();
         user3.setName("Antony");
         user3.setEmail("dad@gamilc.om");
-        user3.setPhone(123456789);
+        user3.setPhone("123456789");
         user3.setPassword("password");
         user3.setRoles(Arrays.asList("DOC"));
 
