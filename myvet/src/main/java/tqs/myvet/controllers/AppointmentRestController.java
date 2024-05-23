@@ -48,7 +48,7 @@ public class AppointmentRestController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid date format. Please use the format: yyyy-MM-ddTHH:mm:ss");
         }
 
-        List<Appointment> appointments = appointmentService.getAppointmentsByDate(dateTime);
+        List<Appointment> appointments = appointmentService.getAppointmentsByStartDate(dateTime);
 
         if (appointments.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No appointments found for the date: " + date);

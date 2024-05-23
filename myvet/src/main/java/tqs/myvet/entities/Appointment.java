@@ -29,7 +29,10 @@ public class Appointment {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime startDate;
+
+    @Column(nullable = false)
+    private LocalDateTime endDate;
 
     @Column(nullable = false)
     @Size(min = 2, max = 30)

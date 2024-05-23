@@ -37,7 +37,8 @@ public class AppointmentServiceImpl implements AppointmentService {
             return null;
         }
 
-        appointmentToUpdate.setDate(appointment.getDate());
+        appointmentToUpdate.setStartDate(appointment.getStartDate());
+        appointmentToUpdate.setEndDate(appointment.getEndDate());
         appointmentToUpdate.setType(appointment.getType());
         appointmentToUpdate.setDocNotes(appointment.getDocNotes());
         appointmentToUpdate.setUser(appointment.getUser());
@@ -57,8 +58,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
     
     @Override
-    public List<Appointment> getAppointmentsByDate(LocalDateTime date) {
-        return appointmentRepository.findByDate(date);
+    public List<Appointment> getAppointmentsByStartDate(LocalDateTime date) {
+        return appointmentRepository.findByStartDate(date);
     }
 
     @Override

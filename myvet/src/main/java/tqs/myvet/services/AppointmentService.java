@@ -11,6 +11,6 @@ public interface AppointmentService {
     void deleteAppointment(Long id);
 
     List<Appointment> getAllAppointments();
-    List<Appointment> getAppointmentsByDate(LocalDateTime date);
+    List<Appointment> getAppointmentsByStartDate(LocalDateTime date);
     List<Appointment> getAppointmentsByType(String type);
 }
