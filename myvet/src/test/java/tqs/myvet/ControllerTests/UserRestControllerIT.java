@@ -44,6 +44,7 @@ class UserRestControllerIT {
     @AfterEach
     void tearDown() {
         repository.deleteAll();
+        petRepository.deleteAll();
     }
 
     @Test
