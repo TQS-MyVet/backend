@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -23,13 +26,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import tqs.myvet.entities.Pet;
-import tqs.myvet.services.PetService;
+import tqs.myvet.repositories.UserRepository;
+import tqs.myvet.services.JWT.JWTService;
+import tqs.myvet.services.Pet.PetService;
+import tqs.myvet.services.User.CustomUserDetailsService;
 import tqs.myvet.controllers.PetRestController;
 
 @WebMvcTest(PetRestController.class)
 class PetController_WithMockServiceTest {
 
     @Autowired
+    private WebApplicationContext context;
+
+    @MockBean
+    private JWTService jwtService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockBean
+    private UserRepository userRepository;
+    
     private MockMvc mvc;
 
     @MockBean
@@ -39,6 +56,7 @@ class PetController_WithMockServiceTest {
 
     @BeforeEach
     void setUp() {
+        mvc = MockMvcBuilders.webAppContextSetup(context).build();
         pets = new ArrayList<>();
         pets.add(new Pet(1L, "Rex", "M", "2020-01-01", "Dog"));
         pets.add(new Pet(2L, "Mimi", "F", "2020-01-01", "Cat"));
@@ -130,6 +148,7 @@ class PetController_WithMockServiceTest {
         verify(petService, times(1)).getPetsByName("John");
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenSavePet_thenReturnsSavedPet() throws Exception {
         Pet newPet = new Pet(3L, "Birdy", "M", "2021-01-01", "Bird");
@@ -145,6 +164,7 @@ class PetController_WithMockServiceTest {
         verify(petService, times(1)).savePet(any(Pet.class));
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenDeletePet_thenStatusOk() throws Exception {
         doNothing().when(petService).deletePet(1L);

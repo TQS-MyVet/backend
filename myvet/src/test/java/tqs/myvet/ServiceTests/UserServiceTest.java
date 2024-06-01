@@ -18,13 +18,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
 import tqs.myvet.entities.DTO.CreateUserDTO;
 import tqs.myvet.entities.DTO.UpdateUserDTO;
 import tqs.myvet.repositories.UserRepository;
-import tqs.myvet.services.UserServiceImpl;
+import tqs.myvet.services.User.UserServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -35,6 +36,9 @@ class UserServiceTest {
     @Mock
     private JavaMailSender emailSender;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -51,6 +55,7 @@ class UserServiceTest {
 
         Mockito.when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
         Mockito.when(userRepository.findByName(user.getName())).thenReturn(Arrays.asList(user));
+        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
     }
 
     @Test
@@ -170,5 +175,14 @@ class UserServiceTest {
         Long id = 1L;
         userService.deleteUser(id);
         Mockito.verify(userRepository, Mockito.times(1)).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Test get user by email")
+    void testGetUserByEmail() {
+        String email = "jose@gmail.com";
+        Optional<User> found = userService.getUserByEmail(email);
+        assertThat(found).isPresent();
+        assertEquals(email, found.get().getEmail());
     }
 }

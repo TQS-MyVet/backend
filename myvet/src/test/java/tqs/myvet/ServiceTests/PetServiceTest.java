@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import tqs.myvet.entities.Pet;
 import tqs.myvet.repositories.PetRepository;
-import tqs.myvet.services.PetServiceImpl;
+import tqs.myvet.services.Pet.PetServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class PetServiceTest {

@@ -7,8 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -20,14 +23,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 import tqs.myvet.controllers.QueueRestController;
+import tqs.myvet.repositories.UserRepository;
+import tqs.myvet.services.JWT.JWTService;
+import tqs.myvet.services.User.CustomUserDetailsService;
 
 @WebMvcTest(QueueRestController.class)
 @TestMethodOrder(MethodOrderer.MethodName.class)
 class QueueControllerTest {
     
     @Autowired
+    private WebApplicationContext context;
+
+    @MockBean
+    private JWTService jwtService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockBean
+    private UserRepository userRepository;
+    
     private MockMvc mvc;
 
+    @BeforeEach
+    void setUp() {
+        mvc = MockMvcBuilders.webAppContextSetup(context).build();
+    }
 
     @Test
     void a_WhenPostToReceptionistQueue_thenAddToReceptionistQueue() throws Exception {

@@ -3,6 +3,7 @@ package tqs.myvet.ControllerTests;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -13,6 +14,8 @@ import org.mockito.Mockito;
 
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,33 +25,60 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.*;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import tqs.myvet.entities.User;
+import tqs.myvet.entities.DTO.CreateAppointmentDTO;
+import tqs.myvet.repositories.UserRepository;
+import tqs.myvet.services.Appointment.AppointmentService;
+import tqs.myvet.services.JWT.JWTService;
+import tqs.myvet.services.Pet.PetService;
+import tqs.myvet.services.User.CustomUserDetailsService;
+import tqs.myvet.services.User.UserService;
 import tqs.myvet.entities.Appointment;
-import tqs.myvet.services.AppointmentService;
+import tqs.myvet.entities.Pet;
 
 @WebMvcTest(AppointmentRestController.class)
 class AppointmentControllerTest {
     
     @Autowired
+    private WebApplicationContext context;
+
     private MockMvc mvc;
 
     @MockBean
     private AppointmentService appointmentService;
 
+    @MockBean
+    private PetService petService;
+    
+    @MockBean
+    private UserService userService;
+
+    @MockBean
+    private JWTService jwtService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockBean
+    private UserRepository userRepository;
+    
     private List<Appointment> appointments;
 
-    User doctor = new User();
+    User user = new User();
+    Pet pet = new Pet();
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime later = now.plusHours(1);
     
     @BeforeEach
     void setUp() {
+        mvc = MockMvcBuilders.webAppContextSetup(context).build();
         appointments = new ArrayList<>();
-        appointments.add(new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor));
-        appointments.add(new Appointment(2L, now, later, "Operation", "The dog needs surgery", doctor));
+        appointments.add(new Appointment(1L, now, later, "Consultation", "The dog is sick", user, pet));
+        appointments.add(new Appointment(2L, now, later, "Operation", "The dog needs surgery", user, pet));
     }
 
     @Test
@@ -76,7 +106,7 @@ class AppointmentControllerTest {
 
         verify(appointmentService, times(1)).getAppointmentById(1L);
     }
-
+    
     @Test
     void whenGetAppointmentById_thenReturnNotFound() throws Exception {
         when(appointmentService.getAppointmentById(-99L)).thenReturn(null);
@@ -126,21 +156,27 @@ class AppointmentControllerTest {
         verify(appointmentService, times(1)).getAppointmentsByType("NonExistentType");
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenCreateAppointment_thenReturnCreated() throws Exception {
-        Appointment appointment = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor);
+        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(now, later, "Consultation", "The dog is sick", 1L, 1L);
+        Appointment newAppointment = new Appointment(3L, now, later, "Consultation", "The dog is sick", user, pet);
+        
+        when(appointmentService.saveAppointment(Mockito.any())).thenReturn(newAppointment);
+        when(userService.getUserDetails(1L)).thenReturn(Optional.of(user));
+        when(petService.getPetById(1L)).thenReturn(pet);
 
-        when(appointmentService.saveAppointment(Mockito.any())).thenReturn(appointment);
         mvc.perform(post("/api/appointments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(Utils.toJson(appointment)))
+                .content(Utils.toJson(appointmentDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(3)))
-                .andExpect(jsonPath("$.type", is(appointment.getType())));
-
+                .andExpect(jsonPath("$.type", is(appointmentDTO.getType())));
+    
         verify(appointmentService, times(1)).saveAppointment(Mockito.any());
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenDeleteAppointment_thenReturnOk() throws Exception {
         doNothing().when(appointmentService).deleteAppointment(1L);
@@ -152,6 +188,7 @@ class AppointmentControllerTest {
         verify(appointmentService, times(1)).deleteAppointment(1L);
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenDeleteNonExistentAppointment_thenReturnOk() throws Exception {
         doNothing().when(appointmentService).deleteAppointment(-99L);
@@ -163,9 +200,10 @@ class AppointmentControllerTest {
         verify(appointmentService, times(1)).deleteAppointment(-99L);
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenUpdateAppointment_thenReturnUpdated() throws Exception {
-        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery", doctor);
+        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery", user, pet);
 
 
         when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(updatedAppointment);
@@ -179,9 +217,10 @@ class AppointmentControllerTest {
         verify(appointmentService, times(1)).updateAppointment(Mockito.any(), Mockito.any());
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenUpdateNonExistentAppointment_thenReturnNotFound() throws Exception {
-        Appointment appointment = new Appointment(-99L, now, later, "Consultation", "The dog is sick", doctor);
+        Appointment appointment = new Appointment(-99L, now, later, "Consultation", "The dog is sick", user, pet);
 
         when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(null);
 
@@ -193,9 +232,10 @@ class AppointmentControllerTest {
         verify(appointmentService, times(1)).updateAppointment(Mockito.any(), Mockito.any());
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenUpdateAppointmentWithNonExistentDoctor_thenReturnNotFound() throws Exception {
-        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery", null);
+        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery", null, null);
 
         when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(null);
 
