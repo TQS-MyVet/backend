@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 
 @RestController
 @RequestMapping("/api/queues")
@@ -41,6 +43,7 @@ public class QueueRestController {
         return new ResponseEntity<>(queues, HttpStatus.OK);
     }
 
+    @SecurityRequirement(name = "Authorization")
     @PostMapping("/receptionist/{userId}")
     public ResponseEntity<QueueInfo> addToReceptionistQueue(@PathVariable Long userId) {
         // check if user is already in queue
@@ -58,6 +61,7 @@ public class QueueRestController {
         return new ResponseEntity<>(queueInfo, HttpStatus.CREATED);
     }
 
+    @SecurityRequirement(name = "Authorization")
     @PostMapping("/doctor/{userId}")
     public ResponseEntity<QueueInfo> addToDoctorQueue(@PathVariable Long userId) {
         // check if user is already in queue
@@ -75,6 +79,7 @@ public class QueueRestController {
         return new ResponseEntity<>(queueInfo, HttpStatus.CREATED);
     }
 
+    @SecurityRequirement(name = "Authorization")
     @DeleteMapping("/receptionist")
     public ResponseEntity<QueueInfo> removeFromReceptionistQueue() {
         try {
@@ -84,6 +89,7 @@ public class QueueRestController {
         }
     }
 
+    @SecurityRequirement(name = "Authorization")
     @DeleteMapping("/doctor")
     public ResponseEntity<QueueInfo> removeFromDoctorQueue() {
         try {
@@ -93,6 +99,7 @@ public class QueueRestController {
         }
     }
 
+    @SecurityRequirement(name = "Authorization")
     @GetMapping("/receptionist/{userId}")
     public ResponseEntity<QueueInfo> getReceptionistQueuePos(@PathVariable Long userId) {
         for (QueueInfo queueInfo : receptionistQueue) {
@@ -103,6 +110,7 @@ public class QueueRestController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in queue");
     }
 
+    @SecurityRequirement(name = "Authorization")
     @GetMapping("/doctor/{userId}")
     public ResponseEntity<QueueInfo> getDoctorQueuePos(@PathVariable Long userId) {
         for (QueueInfo queueInfo : doctorQueue) {

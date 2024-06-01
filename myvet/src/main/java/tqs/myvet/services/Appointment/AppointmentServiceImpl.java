@@ -1,4 +1,4 @@
-package tqs.myvet.services;
+package tqs.myvet.services.Appointment;
 
 import java.util.List;
 
@@ -41,7 +41,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentToUpdate.setEndDate(appointment.getEndDate());
         appointmentToUpdate.setType(appointment.getType());
         appointmentToUpdate.setDocNotes(appointment.getDocNotes());
-        appointmentToUpdate.setUser(appointment.getUser());
+        appointmentToUpdate.setDoctor(appointment.getDoctor());
+        appointmentToUpdate.setPet(appointment.getPet());
 
         return appointmentRepository.save(appointmentToUpdate);
     }
@@ -66,4 +67,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<Appointment> getAppointmentsByType(String type) {
         return appointmentRepository.findByType(type);
     }    
+
+    @Override
+    public List<Appointment> getAppointmentsByPetId(Long petId) {
+        return appointmentRepository.findByPetId(petId);
+    }
 }

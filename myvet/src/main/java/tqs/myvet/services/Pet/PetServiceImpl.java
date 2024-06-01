@@ -1,4 +1,4 @@
-package tqs.myvet.services;
+package tqs.myvet.services.Pet;
 
 import org.springframework.stereotype.Service;
 
@@ -43,5 +43,21 @@ public class PetServiceImpl implements PetService {
     @Override
     public List<Pet> getPetsBySpecies(String species) {
         return petRepository.findBySpecies(species);
+    }
+
+    @Override
+    public Pet updatePet(Long id, Pet pet) {
+        Pet petToUpdate = petRepository.findById(id).orElse(null);
+
+        if (petToUpdate == null) {
+            return null;
+        }
+
+        petToUpdate.setName(pet.getName());
+        petToUpdate.setSpecies(pet.getSpecies());
+        petToUpdate.setBirthdate(pet.getBirthdate());
+        petToUpdate.setSex(pet.getSex());
+
+        return petRepository.save(petToUpdate);
     }
 }
