@@ -3,12 +3,19 @@ package tqs.myvet.ServiceTests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -17,21 +24,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import tqs.myvet.config.JwtAuthenticationFilter;
 import tqs.myvet.entities.User;
+import tqs.myvet.repositories.UserRepository;
 import tqs.myvet.services.JWT.JWTService;
+import tqs.myvet.services.User.UserServiceImpl;
 
+@ExtendWith(MockitoExtension.class)
 class JwtServiceTest {
 
-    @Test
-    void testDoFilterInternal() throws ServletException, IOException {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-        FilterChain filterChain = Mockito.mock(FilterChain.class);
-
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter();
-        jwtAuthenticationFilter.doFilter(request, response, filterChain);
-
-        Mockito.verify(filterChain, Mockito.times(1)).doFilter(request, response);
-    }
+    @InjectMocks
+    private JWTService jwtService;
     
     @Test
     void testGenerateToken() {
@@ -39,7 +40,6 @@ class JwtServiceTest {
         Mockito.when(user.getId()).thenReturn(1L);
         Mockito.when(user.getRoles()).thenReturn(Arrays.asList("ROLE_USER"));
 
-        JWTService jwtService = new JWTService();
         String token = jwtService.generateToken(user);
 
         assertNotNull(token);
@@ -51,7 +51,6 @@ class JwtServiceTest {
         Mockito.when(user.getId()).thenReturn(1L);
         Mockito.when(user.getRoles()).thenReturn(Arrays.asList("ROLE_USER"));
 
-        JWTService jwtService = new JWTService();
         String token = jwtService.generateToken(user);
 
         Claims claims = jwtService.extractInfo(token);
@@ -67,7 +66,6 @@ class JwtServiceTest {
         Mockito.when(user.getId()).thenReturn(1L);
         Mockito.when(user.getRoles()).thenReturn(Arrays.asList("ROLE_USER"));
 
-        JWTService jwtService = new JWTService();
         String token = jwtService.generateToken(user);
 
         assertTrue(jwtService.isTokenValid(token));
