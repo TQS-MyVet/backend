@@ -77,8 +77,8 @@ class AppointmentController_WithMockServiceTest {
     void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
         appointments = new ArrayList<>();
-        appointments.add(new Appointment(1L, now, later, "Consultation", "The dog is sick", user, pet));
-        appointments.add(new Appointment(2L, now, later, "Operation", "The dog needs surgery", user, pet));
+        appointments.add(new Appointment(1L, now, later, "Consultation", "The dog is sick","Title", user, pet));
+        appointments.add(new Appointment(2L, now, later, "Operation", "The dog needs surgery","Title", user, pet));
     }
 
     @Test
@@ -159,8 +159,8 @@ class AppointmentController_WithMockServiceTest {
     @WithMockUser(roles="DOCTOR")
     @Test
     void whenCreateAppointment_thenReturnCreated() throws Exception {
-        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(now, later, "Consultation", "The dog is sick", 1L, 1L);
-        Appointment newAppointment = new Appointment(3L, now, later, "Consultation", "The dog is sick", user, pet);
+        CreateAppointmentDTO appointmentDTO = new CreateAppointmentDTO(now, later, "Consultation", "The dog is sick","Title", 1L, 1L);
+        Appointment newAppointment = new Appointment(3L, now, later, "Consultation", "The dog is sick","Title", user, pet);
         
         when(appointmentService.saveAppointment(Mockito.any())).thenReturn(newAppointment);
         when(userService.getUserDetails(1L)).thenReturn(Optional.of(user));
@@ -203,7 +203,7 @@ class AppointmentController_WithMockServiceTest {
     @WithMockUser(roles="DOCTOR")
     @Test
     void whenUpdateAppointment_thenReturnUpdated() throws Exception {
-        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery", user, pet);
+        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery","Title", user, pet);
 
 
         when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(updatedAppointment);
@@ -220,7 +220,7 @@ class AppointmentController_WithMockServiceTest {
     @WithMockUser(roles="DOCTOR")
     @Test
     void whenUpdateNonExistentAppointment_thenReturnNotFound() throws Exception {
-        Appointment appointment = new Appointment(-99L, now, later, "Consultation", "The dog is sick", user, pet);
+        Appointment appointment = new Appointment(-99L, now, later, "Consultation", "The dog is sick","Title", user, pet);
 
         when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(null);
 
@@ -235,7 +235,7 @@ class AppointmentController_WithMockServiceTest {
     @WithMockUser(roles="DOCTOR")
     @Test
     void whenUpdateAppointmentWithNonExistentDoctor_thenReturnNotFound() throws Exception {
-        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery", null, null);
+        Appointment updatedAppointment = new Appointment(1L, now, later, "Operation", "The dog needs surgery","Title", null, null);
 
         when(appointmentService.updateAppointment(Mockito.any(), Mockito.any())).thenReturn(null);
 

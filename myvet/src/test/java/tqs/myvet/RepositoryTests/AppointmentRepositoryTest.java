@@ -40,6 +40,7 @@ class AppointmentRepositoryTest {
         appointment.setEndDate(LocalDateTime.now());
         appointment.setType("Consultation");
         appointment.setDocNotes("The dog is sick");
+        appointment.setTitle("Title");
         appointment.setDoctor(user);
 
         
@@ -73,6 +74,8 @@ class AppointmentRepositoryTest {
         appointment1.setType("Consultation");
         appointment1.setDocNotes("The dog is sick");
         appointment1.setDoctor(user);
+        appointment1.setTitle("Title");
+
 
         Appointment appointment2 = new Appointment();
         appointment2.setStartDate(LocalDateTime.now());
@@ -80,6 +83,8 @@ class AppointmentRepositoryTest {
         appointment2.setType("Consultation");
         appointment2.setDocNotes("The dog is sick");
         appointment2.setDoctor(user);
+        appointment2.setTitle("Title");
+
 
         Appointment appointment3 = new Appointment();
         appointment3.setStartDate(LocalDateTime.now());
@@ -87,6 +92,8 @@ class AppointmentRepositoryTest {
         appointment3.setType("Consultation");
         appointment3.setDocNotes("The dog is dead");
         appointment3.setDoctor(user);
+        appointment3.setTitle("Title");
+
         
         entityManager.persist(appointment1);
         entityManager.persist(appointment2);
