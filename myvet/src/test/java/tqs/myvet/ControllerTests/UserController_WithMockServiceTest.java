@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -34,6 +38,7 @@ import org.springframework.web.context.WebApplicationContext;
 import tqs.myvet.controllers.UserRestController;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
+import tqs.myvet.entities.DTO.AuthenticationRequestDTO;
 import tqs.myvet.entities.DTO.CreateUserDTO;
 import tqs.myvet.entities.DTO.UpdateUserDTO;
 import tqs.myvet.repositories.UserRepository;
@@ -245,5 +250,29 @@ class UserController_WithMockServiceTest {
                 .andExpect(jsonPath("$[0].name", is(users.get(0).getName())));
 
         verify(userService, times(1)).getAllUsers();
+    }
+
+        @Test
+    void authenticationAndGetToken_success() throws Exception {
+        AuthenticationRequestDTO request = new AuthenticationRequestDTO("test@example.com", "password");
+        User testUser = new User();
+        testUser.setEmail("test@example.com");
+        testUser.setPassword("password");
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()))).thenReturn(authentication);
+        when(userService.getUserByEmail(request.getEmail())).thenReturn(Optional.of(testUser));
+        when(jwtService.generateToken(testUser)).thenReturn("testToken");
+
+        mvc.perform(post("/api/users/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Utils.toJson(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.bearerToken", is("testToken")));
+
+        verify(authenticationManager, times(1)).authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        verify(userService, times(1)).getUserByEmail(request.getEmail());
+        verify(jwtService, times(1)).generateToken(testUser);
     }
 }

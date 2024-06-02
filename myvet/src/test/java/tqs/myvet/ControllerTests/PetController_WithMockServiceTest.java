@@ -14,8 +14,10 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import tqs.myvet.entities.Pet;
+import tqs.myvet.entities.DTO.CreatePetDTO;
 import tqs.myvet.repositories.UserRepository;
 import tqs.myvet.services.JWT.JWTService;
 import tqs.myvet.services.Pet.PetService;
@@ -174,5 +177,31 @@ class PetController_WithMockServiceTest {
                 .andExpect(status().isOk());
 
         verify(petService, times(1)).deletePet(1L);
+    }
+
+    @Test
+    @WithMockUser(roles="DOCTOR")
+    void whenUpdatePet_thenReturnsUpdatedPet() throws Exception {
+        // Arrange
+        Long id = 1L;
+        CreatePetDTO petDTO = new CreatePetDTO();
+        petDTO.setName("Rexy");
+        petDTO.setSex("M");
+        petDTO.setBirthdate("2020-01-01");
+        petDTO.setSpecies("Dog");
+    
+        Pet petToUpdate = new Pet(id, petDTO.getName(), petDTO.getSex(), petDTO.getBirthdate(), petDTO.getSpecies());
+        Pet updatedPet = new Pet(id, "Rexy", "M", "2020-01-01", "Dog");
+    
+        when(petService.updatePet(eq(id), any(Pet.class))).thenReturn(updatedPet);
+    
+        // Act & Assert
+        mvc.perform(put("/api/pets/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Utils.toJson(petDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is(updatedPet.getName())));
+    
+        verify(petService, times(1)).updatePet(eq(id), any(Pet.class));
     }
 }
