@@ -29,7 +29,7 @@ import tqs.myvet.services.User.CustomUserDetailsService;
 
 @WebMvcTest(QueueRestController.class)
 @TestMethodOrder(MethodOrderer.MethodName.class)
-class QueueControllerTest {
+class QueueController_WithMockServiceTest {
     
     @Autowired
     private WebApplicationContext context;

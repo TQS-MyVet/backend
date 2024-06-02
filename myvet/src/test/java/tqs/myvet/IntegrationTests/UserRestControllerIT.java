@@ -1,4 +1,4 @@
-package tqs.myvet.ControllerTests;
+package tqs.myvet.IntegrationTests;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -36,7 +36,6 @@ import tqs.myvet.repositories.UserRepository;
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
 class UserRestControllerIT {
-
 	@Autowired
     private WebApplicationContext context;
 

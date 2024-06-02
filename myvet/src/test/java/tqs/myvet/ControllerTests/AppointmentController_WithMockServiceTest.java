@@ -41,7 +41,7 @@ import tqs.myvet.entities.Appointment;
 import tqs.myvet.entities.Pet;
 
 @WebMvcTest(AppointmentRestController.class)
-class AppointmentControllerTest {
+class AppointmentController_WithMockServiceTest {
     
     @Autowired
     private WebApplicationContext context;
