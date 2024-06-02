@@ -1,15 +1,18 @@
-package tqs.myvet.ControllerTests;
+package tqs.myvet.IntegrationTests;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import tqs.myvet.repositories.PetRepository;
 import static org.hamcrest.CoreMatchers.is;
@@ -28,13 +31,19 @@ import tqs.myvet.entities.Pet;
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
 class PetRestControllerIT {
+
     @Autowired
+    private WebApplicationContext context;
+
     private MockMvc mvc;
 
     @Autowired
     private PetRepository repository;
 
-
+    @BeforeEach
+    void setUp() {
+        mvc = MockMvcBuilders.webAppContextSetup(context).build();
+    }
 
     @AfterEach
     void tearDown() {
@@ -125,6 +134,7 @@ class PetRestControllerIT {
 
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenSavePet_thenReturnsSavedPet() throws Exception {
         Pet newPet = new Pet(3L, "Birdy", "M", "2021-01-01", "Bird");
@@ -136,6 +146,7 @@ class PetRestControllerIT {
                 .andExpect(jsonPath("$.name", is(newPet.getName())));
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenDeletePet_thenStatusOk() throws Exception {
         mvc.perform(delete("/api/pets/1")

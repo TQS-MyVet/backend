@@ -8,10 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import tqs.myvet.entities.Pet;
-import tqs.myvet.services.PetService;
+import tqs.myvet.entities.DTO.CreatePetDTO;
+import tqs.myvet.services.Pet.PetService;
 
+@SecurityRequirement(name = "Authorization")
 @RestController
 @RequestMapping("/api/pets")
 public class PetRestController {
@@ -44,7 +47,7 @@ public class PetRestController {
         }
         return new ResponseEntity<>(pets, HttpStatus.OK);
     }
-
+    
     @GetMapping("/name/{name}")
     public ResponseEntity<List<Pet>> getPetsByName(@PathVariable String name) {
         List<Pet> pets = petService.getPetsByName(name);
@@ -55,8 +58,9 @@ public class PetRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Pet> savePet(@RequestBody @Valid Pet pet) {
-        Pet savedPet = petService.savePet(pet);
+    public ResponseEntity<Pet> savePet(@RequestBody @Valid CreatePetDTO pet) {
+        Pet petToSave = new Pet(null, pet.getName(), pet.getSex(), pet.getBirthdate(), pet.getSpecies());
+        Pet savedPet = petService.savePet(petToSave);
         return new ResponseEntity<>(savedPet, HttpStatus.CREATED);
     }
 
@@ -71,4 +75,15 @@ public class PetRestController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Pet> updatePet(@PathVariable Long id, @RequestBody @Valid CreatePetDTO pet) {
+        Pet petToUpdate = new Pet(id, pet.getName(), pet.getSex(), pet.getBirthdate(), pet.getSpecies());
+        Pet updatedPet = petService.updatePet(id, petToUpdate);
+
+        if (updatedPet == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet not found");
+        }
+
+        return new ResponseEntity<>(updatedPet, HttpStatus.OK);
+    }
 }

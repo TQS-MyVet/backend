@@ -43,5 +43,10 @@ public class Appointment {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User doctor;
+
+    @ManyToOne
+    @JoinColumn(name = "pet_id")
+    private Pet pet;
+    
 }

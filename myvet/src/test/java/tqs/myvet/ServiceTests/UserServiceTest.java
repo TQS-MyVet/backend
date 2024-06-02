@@ -1,7 +1,6 @@
 package tqs.myvet.ServiceTests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Arrays;
@@ -18,13 +17,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
 import tqs.myvet.entities.DTO.CreateUserDTO;
 import tqs.myvet.entities.DTO.UpdateUserDTO;
 import tqs.myvet.repositories.UserRepository;
-import tqs.myvet.services.UserServiceImpl;
+import tqs.myvet.services.User.UserServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -35,6 +35,9 @@ class UserServiceTest {
     @Mock
     private JavaMailSender emailSender;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -51,6 +54,7 @@ class UserServiceTest {
 
         Mockito.when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
         Mockito.when(userRepository.findByName(user.getName())).thenReturn(Arrays.asList(user));
+        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
     }
 
     @Test
@@ -59,7 +63,7 @@ class UserServiceTest {
         String name = "José Silva";
         List<User> found = userService.getUsersByName(name);
         assertThat(found).hasSize(1);
-        assertEquals(name, found.get(0).getName());
+        assertThat(found.get(0).getName()).isEqualTo(name);
     }
 
     @Test
@@ -68,8 +72,8 @@ class UserServiceTest {
         Long id = 1L;
         Optional<User> found = userService.getUserDetails(id);
         assertThat(found).isPresent();
-        assertEquals(id, found.get().getId());
-        assertEquals("José Silva", found.get().getName());
+        assertThat(found.get().getId()).isEqualTo(id);
+        assertThat(found.get().getName()).isEqualTo("José Silva");
     }
 
     @Test
@@ -87,8 +91,8 @@ class UserServiceTest {
         Long id = 1L;
         List<Pet> found = userService.getUserPets(id);
         assertThat(found).hasSize(2);
-        assertEquals("Bobi", found.get(0).getName());
-        assertEquals("Mimi", found.get(1).getName());
+        assertThat(found.get(0).getName()).isEqualTo("Bobi");
+        assertThat(found.get(1).getName()).isEqualTo("Mimi");
     }
 
     @Test
@@ -120,10 +124,10 @@ class UserServiceTest {
         User saved = userService.createUser(dto);
 
         assertThat(saved).isNotNull();
-        assertEquals("Maria Silva", saved.getName());
-        assertEquals("maria@gmail.com", saved.getEmail());
-        assertEquals("919165005", saved.getPhone());
-        assertEquals(Arrays.asList("USER"), saved.getRoles());
+        assertThat(saved.getName()).isEqualTo("Maria Silva");
+        assertThat(saved.getEmail()).isEqualTo("maria@gmail.com");
+        assertThat(saved.getPhone()).isEqualTo("919165005");
+        assertThat(saved.getRoles()).containsExactly("USER");
     }
 
     @Test
@@ -142,8 +146,8 @@ class UserServiceTest {
         User updated = userService.updateUser(1L, updatedUser);
 
         assertThat(updated).isNotNull();
-        assertEquals("Zezinho Silva", updated.getName());
-        assertEquals("ze@gmail.com", updated.getEmail());
+        assertThat(updated.getName()).isEqualTo("Zezinho Silva");
+        assertThat(updated.getEmail()).isEqualTo("ze@gmail.com");
     }
 
     @Test
@@ -170,5 +174,14 @@ class UserServiceTest {
         Long id = 1L;
         userService.deleteUser(id);
         Mockito.verify(userRepository, Mockito.times(1)).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Test get user by email")
+    void testGetUserByEmail() {
+        String email = "jose@gmail.com";
+        Optional<User> found = userService.getUserByEmail(email);
+        assertThat(found).isPresent();
+        assertThat(found.get().getEmail()).isEqualTo(email);
     }
 }

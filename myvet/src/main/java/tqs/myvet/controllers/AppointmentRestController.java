@@ -2,6 +2,7 @@ package tqs.myvet.controllers;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -9,22 +10,40 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import tqs.myvet.entities.Appointment;
-import tqs.myvet.services.AppointmentService;
+import tqs.myvet.entities.Pet;
+import tqs.myvet.entities.User;
+import tqs.myvet.entities.DTO.CreateAppointmentDTO;
+import tqs.myvet.services.Appointment.AppointmentService;
+import tqs.myvet.services.Pet.PetService;
+import tqs.myvet.services.User.UserService;
+
+@SecurityRequirement(name = "Authorization")
 @RestController
 @RequestMapping("/api/appointments")
 public class AppointmentRestController {
     private final AppointmentService appointmentService;
-    
+    private final PetService petService;
+    private final UserService userService;
+
     String appointmentNotFound = "Appointment not found";
 
-    public AppointmentRestController(AppointmentService appointmentService) {
+    public AppointmentRestController(AppointmentService appointmentService, PetService petService, UserService userService) {
         this.appointmentService = appointmentService;
+        this.petService = petService;
+        this.userService = userService;
     }
 
     @GetMapping
     public ResponseEntity<List<Appointment>> getAllAppointments() {
         List<Appointment> appointments = appointmentService.getAllAppointments();
+        return new ResponseEntity<>(appointments, HttpStatus.OK);
+    }
+
+    @GetMapping("/pet/{petId}")
+    public ResponseEntity<List<Appointment>> getAppointmentsByPetId(@PathVariable Long petId) {
+        List<Appointment> appointments = appointmentService.getAppointmentsByPetId(petId);
         return new ResponseEntity<>(appointments, HttpStatus.OK);
     }
 
@@ -69,8 +88,20 @@ public class AppointmentRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Appointment> saveAppointment(@RequestBody Appointment appointment) {
-        Appointment savedAppointment = appointmentService.saveAppointment(appointment);
+    public ResponseEntity<Appointment> saveAppointment(@RequestBody CreateAppointmentDTO appointment) {
+        Optional<User> user = userService.getUserDetails(appointment.getDoctorId());
+        if (user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Doctor not found");
+        }
+        
+        Pet pet = petService.getPetById(appointment.getPetId());
+        if (pet == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet not found");
+        }
+
+        Appointment newAppointment = new Appointment(null, appointment.getStartDate(), appointment.getEndDate(), appointment.getType(), appointment.getDocNotes(), user.get(), pet);
+
+        Appointment savedAppointment = appointmentService.saveAppointment(newAppointment);
         return new ResponseEntity<>(savedAppointment, HttpStatus.CREATED);
     }
 

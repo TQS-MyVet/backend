@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import tqs.myvet.entities.Pet;
 import tqs.myvet.repositories.PetRepository;
-import tqs.myvet.services.PetServiceImpl;
+import tqs.myvet.services.Pet.PetServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class PetServiceTest {
@@ -94,4 +94,16 @@ class PetServiceTest {
         Mockito.verify(petRepository, Mockito.times(1)).findBySpecies(any());
     }
 
+    @Test
+    void whenUpdatePet_thenReturnUpdatedPet() {
+        Pet pet = new Pet(1L, "Fido", "Male", "2020-01-01", "Dog");
+        Pet updatedPet = new Pet(1L, "Fido", "Female", "2020-01-01", "Dog");
+
+        Mockito.when(petRepository.findById(pet.getId())).thenReturn(Optional.of(pet));
+        Mockito.when(petRepository.save(any())).thenReturn(updatedPet);
+        
+        Pet result = petService.updatePet(pet.getId(), updatedPet);
+        assertThat(result).isNotNull();
+        assertThat(result.getSex()).isEqualTo(updatedPet.getSex());
+    }
 }

@@ -47,5 +47,4 @@ public class User {
     @OneToMany
     @JoinColumn(name = "pets_id")
     private List<Pet> pets;
-
 }

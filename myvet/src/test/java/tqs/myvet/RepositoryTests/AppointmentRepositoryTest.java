@@ -40,7 +40,7 @@ class AppointmentRepositoryTest {
         appointment.setEndDate(LocalDateTime.now());
         appointment.setType("Consultation");
         appointment.setDocNotes("The dog is sick");
-        appointment.setUser(user);
+        appointment.setDoctor(user);
 
         
         entityManager.persistAndFlush(appointment);
@@ -72,21 +72,21 @@ class AppointmentRepositoryTest {
         appointment1.setEndDate(LocalDateTime.now());
         appointment1.setType("Consultation");
         appointment1.setDocNotes("The dog is sick");
-        appointment1.setUser(user);
+        appointment1.setDoctor(user);
 
         Appointment appointment2 = new Appointment();
         appointment2.setStartDate(LocalDateTime.now());
         appointment2.setEndDate(LocalDateTime.now());
         appointment2.setType("Consultation");
         appointment2.setDocNotes("The dog is sick");
-        appointment2.setUser(user);
+        appointment2.setDoctor(user);
 
         Appointment appointment3 = new Appointment();
         appointment3.setStartDate(LocalDateTime.now());
         appointment3.setEndDate(LocalDateTime.now());
         appointment3.setType("Consultation");
         appointment3.setDocNotes("The dog is dead");
-        appointment3.setUser(user);
+        appointment3.setDoctor(user);
         
         entityManager.persist(appointment1);
         entityManager.persist(appointment2);
@@ -98,6 +98,5 @@ class AppointmentRepositoryTest {
         assertThat(allAppointments).hasSize(3).extracting(Appointment::getStartDate).containsOnly(appointment1.getStartDate(), appointment2.getStartDate(), appointment3.getStartDate());
         assertThat(allAppointments).hasSize(3).extracting(Appointment::getId).containsOnly(appointment1.getId(), appointment2.getId(), appointment3.getId());
     }
-
 }
 

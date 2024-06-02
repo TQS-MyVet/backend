@@ -16,7 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import tqs.myvet.repositories.AppointmentRepository;
-import tqs.myvet.services.AppointmentServiceImpl;
+import tqs.myvet.services.Appointment.AppointmentServiceImpl;
 import tqs.myvet.entities.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,9 +35,9 @@ class AppointmentServiceTest {
     void setUp() {
 
         User doctor = new User();
-        
-        Appointment ap1 = new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor);
-        Appointment ap2 = new Appointment(2L, now, later, "Operation", "The dog needs surgery", doctor);
+        Pet pet = new Pet();
+        Appointment ap1 = new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor, pet);
+        Appointment ap2 = new Appointment(2L, now, later, "Operation", "The dog needs surgery", doctor, pet);
 
         List<Appointment> allAppointments = List.of(ap1, ap2);
 
@@ -104,8 +104,9 @@ class AppointmentServiceTest {
     @DisplayName("Create a new appointment")
     void testCreateAppointment() {
         User doctor = new User();
-        Appointment ap = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor);
-        Appointment createAp = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor);
+        Pet pet = new Pet();
+        Appointment ap = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor, pet);
+        Appointment createAp = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor, pet);
 
         createAp.setId(1L);
         
@@ -121,12 +122,13 @@ class AppointmentServiceTest {
     @DisplayName("Update an appointment")
     void testUpdateAppointment() {
         User doctor = new User();
-        Appointment ap = new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor);
+        Pet pet = new Pet();
+        Appointment ap = new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor, pet);
         Mockito.when(appointmentRepository.save(Mockito.any())).thenReturn(ap);
 
         appointmentService.saveAppointment(ap);
 
-        Appointment updateAp = new Appointment(1L, now, later, "Operation", "The dog is sick", doctor);
+        Appointment updateAp = new Appointment(1L, now, later, "Operation", "The dog is sick", doctor, pet);
                 
         Mockito.when(appointmentRepository.save(Mockito.any())).thenReturn(updateAp);
 

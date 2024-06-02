@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,28 +27,54 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import tqs.myvet.controllers.UserRestController;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
+import tqs.myvet.entities.DTO.AuthenticationRequestDTO;
 import tqs.myvet.entities.DTO.CreateUserDTO;
 import tqs.myvet.entities.DTO.UpdateUserDTO;
-import tqs.myvet.services.UserService;
+import tqs.myvet.repositories.UserRepository;
+import tqs.myvet.services.JWT.JWTService;
+import tqs.myvet.services.User.CustomUserDetailsService;
+import tqs.myvet.services.User.UserService;
 
 @WebMvcTest(UserRestController.class)
 class UserController_WithMockServiceTest {
+
+
     @Autowired
+    private WebApplicationContext context;
+    
     private MockMvc mvc;
 
     @MockBean
     private UserService userService;
 
+    @MockBean
+    private JWTService jwtService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockBean
+    private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private UserRepository userRepository;
+
     private List<User> users;
 
     @BeforeEach
     void setUp() {
+		mvc = MockMvcBuilders.webAppContextSetup(context).build();
         users = new ArrayList<>();
         Pet pet1 = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
         Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat");
@@ -128,6 +156,7 @@ class UserController_WithMockServiceTest {
         verify(userService, times(1)).getUserPets(-1L);
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenCreateUser_thenReturnUser() throws Exception {
         CreateUserDTO dto = new CreateUserDTO();
@@ -152,6 +181,7 @@ class UserController_WithMockServiceTest {
         verify(userService, times(1)).createUser(any(CreateUserDTO.class));
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenUpdateUser_thenReturnUser() throws Exception {
         UpdateUserDTO dto = new UpdateUserDTO();
@@ -177,6 +207,7 @@ class UserController_WithMockServiceTest {
         verify(userService, times(1)).updateUser(anyLong(), any(UpdateUserDTO.class));
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenUpdateUserWithInvalidId_thenReturnNotFound() throws Exception {
         UpdateUserDTO dto = new UpdateUserDTO();
@@ -195,6 +226,7 @@ class UserController_WithMockServiceTest {
         verify(userService, times(1)).updateUser(eq(-1L), any(UpdateUserDTO.class));
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenDeleteUser_thenReturnOk() throws Exception {
         doNothing().when(userService).deleteUser(1L);
@@ -206,6 +238,7 @@ class UserController_WithMockServiceTest {
         verify(userService, times(1)).deleteUser(1L);
     }
 
+    @WithMockUser(roles="DOCTOR")
     @Test
     void whenGetAllUsers_thenReturnUsers() throws Exception {
         when(userService.getAllUsers()).thenReturn(users);
@@ -217,5 +250,29 @@ class UserController_WithMockServiceTest {
                 .andExpect(jsonPath("$[0].name", is(users.get(0).getName())));
 
         verify(userService, times(1)).getAllUsers();
+    }
+
+        @Test
+    void authenticationAndGetToken_success() throws Exception {
+        AuthenticationRequestDTO request = new AuthenticationRequestDTO("test@example.com", "password");
+        User testUser = new User();
+        testUser.setEmail("test@example.com");
+        testUser.setPassword("password");
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()))).thenReturn(authentication);
+        when(userService.getUserByEmail(request.getEmail())).thenReturn(Optional.of(testUser));
+        when(jwtService.generateToken(testUser)).thenReturn("testToken");
+
+        mvc.perform(post("/api/users/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Utils.toJson(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.bearerToken", is("testToken")));
+
+        verify(authenticationManager, times(1)).authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        verify(userService, times(1)).getUserByEmail(request.getEmail());
+        verify(jwtService, times(1)).generateToken(testUser);
     }
 }

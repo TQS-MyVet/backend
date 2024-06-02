@@ -1,4 +1,4 @@
-package tqs.myvet.services;
+package tqs.myvet.services.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,4 +23,6 @@ public interface UserService {
     public void deleteUser(long id);
 
     public List<User> getAllUsers();
+
+    public Optional<User> getUserByEmail(String email);
 }

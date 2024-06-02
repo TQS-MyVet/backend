@@ -1,4 +1,4 @@
-package tqs.myvet.services;
+package tqs.myvet.services.Appointment;
 
 import java.util.List;
 import java.time.LocalDateTime;
@@ -13,4 +13,5 @@ public interface AppointmentService {
     List<Appointment> getAllAppointments();
     List<Appointment> getAppointmentsByStartDate(LocalDateTime date);
     List<Appointment> getAppointmentsByType(String type);
+    List<Appointment> getAppointmentsByPetId(Long petId);
 }

@@ -1,4 +1,4 @@
-package tqs.myvet.services;
+package tqs.myvet.services.User;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +8,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
@@ -20,13 +22,16 @@ import tqs.myvet.repositories.UserRepository;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JavaMailSender emailSender;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    public UserServiceImpl(UserRepository userRepository, JavaMailSender emailSender) {
+    public UserServiceImpl(UserRepository userRepository, JavaMailSender emailSender, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.emailSender = emailSender;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -62,7 +67,9 @@ public class UserServiceImpl implements UserService {
 
         String password = uuid.toString().replace("-", "");
         password = password.substring(0, 16);
-        newUser.setPassword(password);
+        
+        String hashPassword = passwordEncoder.encode(password);
+        newUser.setPassword(hashPassword);
 
         generateEmail(newUser, password);
 
@@ -111,4 +118,10 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+
 }
