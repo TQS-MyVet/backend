@@ -9,7 +9,6 @@ import javax.crypto.SecretKey;
 
 import java.util.Map;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;

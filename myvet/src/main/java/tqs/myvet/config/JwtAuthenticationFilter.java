@@ -19,7 +19,6 @@ import tqs.myvet.entities.User;
 import tqs.myvet.repositories.UserRepository;
 import tqs.myvet.services.JWT.JWTService;
 import tqs.myvet.services.User.CustomUserDetailsService;
-import tqs.myvet.services.User.UserService;
 
 @Configuration
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
