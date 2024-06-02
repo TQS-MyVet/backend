@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,8 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import io.cucumber.java.AfterAll;
-import io.cucumber.java.BeforeAll;
 import tqs.myvet.entities.Appointment;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.User;
@@ -39,7 +36,7 @@ import tqs.myvet.repositories.UserRepository;
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
-public class AppointmentRestControllerIT {
+class AppointmentRestControllerIT {
     
     @Autowired
     private WebApplicationContext context;

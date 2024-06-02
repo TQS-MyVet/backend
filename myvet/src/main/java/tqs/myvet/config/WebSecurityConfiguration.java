@@ -25,12 +25,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfiguration {
 
-    @Autowired
     private CustomUserDetailsService userService;
 
-    @Autowired
-    private JwtAuthenticationFilter JwtAuthenticationFilter;
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    public WebSecurityConfiguration(CustomUserDetailsService userService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.userService = userService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -52,7 +56,7 @@ public class WebSecurityConfiguration {
             request.requestMatchers(HttpMethod.PUT, api).hasAnyRole(doctorRole, receptionist);
             request.requestMatchers(HttpMethod.GET, api).hasAnyRole("USER", doctorRole, receptionist);
             request.anyRequest().permitAll();
-        }).addFilterBefore(JwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        }).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

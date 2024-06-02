@@ -190,7 +190,6 @@ class PetController_WithMockServiceTest {
         petDTO.setBirthdate("2020-01-01");
         petDTO.setSpecies("Dog");
     
-        Pet petToUpdate = new Pet(id, petDTO.getName(), petDTO.getSex(), petDTO.getBirthdate(), petDTO.getSpecies());
         Pet updatedPet = new Pet(id, "Rexy", "M", "2020-01-01", "Dog");
     
         when(petService.updatePet(eq(id), any(Pet.class))).thenReturn(updatedPet);

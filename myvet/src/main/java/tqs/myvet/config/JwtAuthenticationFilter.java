@@ -23,14 +23,18 @@ import tqs.myvet.services.User.CustomUserDetailsService;
 @Configuration
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
-    @Autowired
     private JWTService jwtService;
 
-    @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    public JwtAuthenticationFilter(JWTService jwtService, CustomUserDetailsService customUserDetailsService, UserRepository userRepository) {
+        this.jwtService = jwtService;
+        this.customUserDetailsService = customUserDetailsService;
+        this.userRepository = userRepository;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -42,9 +46,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
                 String jwt = authHeader.substring(7);
                 Claims payload = jwtService.extractInfo(jwt);
-                String user_id = payload.getSubject();
-                Long user_id_long = Long.parseLong(user_id);
-                User maybeuser = userRepository.findById(user_id_long).orElse(null);
+                String userId = payload.getSubject();
+                Long userIdLong = Long.parseLong(userId);
+                User maybeuser = userRepository.findById(userIdLong).orElse(null);
 
                 if (maybeuser != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(maybeuser.getEmail());
