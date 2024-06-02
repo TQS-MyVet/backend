@@ -1,7 +1,6 @@
 package tqs.myvet.ServiceTests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Arrays;
@@ -64,7 +63,7 @@ class UserServiceTest {
         String name = "José Silva";
         List<User> found = userService.getUsersByName(name);
         assertThat(found).hasSize(1);
-        assertEquals(name, found.get(0).getName());
+        assertThat(found.get(0).getName()).isEqualTo(name);
     }
 
     @Test
@@ -73,8 +72,8 @@ class UserServiceTest {
         Long id = 1L;
         Optional<User> found = userService.getUserDetails(id);
         assertThat(found).isPresent();
-        assertEquals(id, found.get().getId());
-        assertEquals("José Silva", found.get().getName());
+        assertThat(found.get().getId()).isEqualTo(id);
+        assertThat(found.get().getName()).isEqualTo("José Silva");
     }
 
     @Test
@@ -92,8 +91,8 @@ class UserServiceTest {
         Long id = 1L;
         List<Pet> found = userService.getUserPets(id);
         assertThat(found).hasSize(2);
-        assertEquals("Bobi", found.get(0).getName());
-        assertEquals("Mimi", found.get(1).getName());
+        assertThat(found.get(0).getName()).isEqualTo("Bobi");
+        assertThat(found.get(1).getName()).isEqualTo("Mimi");
     }
 
     @Test
@@ -125,10 +124,10 @@ class UserServiceTest {
         User saved = userService.createUser(dto);
 
         assertThat(saved).isNotNull();
-        assertEquals("Maria Silva", saved.getName());
-        assertEquals("maria@gmail.com", saved.getEmail());
-        assertEquals("919165005", saved.getPhone());
-        assertEquals(Arrays.asList("USER"), saved.getRoles());
+        assertThat(saved.getName()).isEqualTo("Maria Silva");
+        assertThat(saved.getEmail()).isEqualTo("maria@gmail.com");
+        assertThat(saved.getPhone()).isEqualTo("919165005");
+        assertThat(saved.getRoles()).containsExactly("USER");
     }
 
     @Test
@@ -147,8 +146,8 @@ class UserServiceTest {
         User updated = userService.updateUser(1L, updatedUser);
 
         assertThat(updated).isNotNull();
-        assertEquals("Zezinho Silva", updated.getName());
-        assertEquals("ze@gmail.com", updated.getEmail());
+        assertThat(updated.getName()).isEqualTo("Zezinho Silva");
+        assertThat(updated.getEmail()).isEqualTo("ze@gmail.com");
     }
 
     @Test
@@ -183,6 +182,6 @@ class UserServiceTest {
         String email = "jose@gmail.com";
         Optional<User> found = userService.getUserByEmail(email);
         assertThat(found).isPresent();
-        assertEquals(email, found.get().getEmail());
+        assertThat(found.get().getEmail()).isEqualTo(email);
     }
 }

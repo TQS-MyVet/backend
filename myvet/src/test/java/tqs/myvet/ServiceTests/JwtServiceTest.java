@@ -1,32 +1,17 @@
 package tqs.myvet.ServiceTests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import tqs.myvet.config.JwtAuthenticationFilter;
 import tqs.myvet.entities.User;
-import tqs.myvet.repositories.UserRepository;
 import tqs.myvet.services.JWT.JWTService;
-import tqs.myvet.services.User.UserServiceImpl;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class JwtServiceTest {
@@ -42,7 +27,7 @@ class JwtServiceTest {
 
         String token = jwtService.generateToken(user);
 
-        assertNotNull(token);
+        assertThat(token).isNotNull();
     }
 
     @Test
@@ -55,9 +40,9 @@ class JwtServiceTest {
 
         Claims claims = jwtService.extractInfo(token);
 
-        assertEquals("1", claims.getSubject());
-        assertEquals("myvet", claims.getIssuer());
-        assertEquals(user.getRoles().toString(), claims.get("roles"));
+        assertThat(claims.getSubject()).isEqualTo("1");
+        assertThat(claims.getIssuer()).isEqualTo("myvet");
+        assertThat(claims.get("roles")).hasToString(user.getRoles().toString());
     }
 
     @Test
@@ -68,6 +53,6 @@ class JwtServiceTest {
 
         String token = jwtService.generateToken(user);
 
-        assertTrue(jwtService.isTokenValid(token));
+        assertThat(jwtService.isTokenValid(token)).isTrue();
     }
 }
