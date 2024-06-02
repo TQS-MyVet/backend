@@ -59,6 +59,20 @@ class UserRestControllerIT {
     }
 
     @Test
+    void whenLogin_thenReturnToken() throws Exception {
+        User user = new User(1L, "José Silva", "jose@gmail.com", "919165004", "{bcrypt}$2a$10$cfkeqypuAq/PE7FJDzir3.ZlTYN.Yl8qbXYhTxWiYXCmPJKrfalXC", List.of("USER"),
+                List.of());
+
+        repository.save(user);
+
+        mvc.perform(post("/api/users/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\": \"jose@gmail.com\", \"password\": \"admin\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.bearerToken").isString());
+    }
+
+    @Test
     void whenGetUsersByName_thenReturnUsers() throws Exception {
         User user = new User(1L, "José Silva", "jose@gmail.com", "919165004", "batata123", List.of("USER"),
                 List.of());
