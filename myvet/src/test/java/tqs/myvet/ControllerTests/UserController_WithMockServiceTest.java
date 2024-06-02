@@ -246,4 +246,15 @@ class UserController_WithMockServiceTest {
 
         verify(userService, times(1)).getAllUsers();
     }
+
+    @Test
+    void whenLogin_thenReturnToken() throws Exception {
+        when(jwtService.generateToken(any(User.class))).thenReturn("token");
+
+        mvc.perform(post("/api/users/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\": \"test@gmail.com\", \"password\": \"password\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token", is("token")));
+    }
 }
