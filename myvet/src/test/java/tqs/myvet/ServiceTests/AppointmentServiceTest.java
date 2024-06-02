@@ -36,8 +36,8 @@ class AppointmentServiceTest {
 
         User doctor = new User();
         Pet pet = new Pet();
-        Appointment ap1 = new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor, pet);
-        Appointment ap2 = new Appointment(2L, now, later, "Operation", "The dog needs surgery", doctor, pet);
+        Appointment ap1 = new Appointment(1L, now, later, "Consultation", "The dog is sick","Title", doctor, pet);
+        Appointment ap2 = new Appointment(2L, now, later, "Operation", "The dog needs surgery","Title", doctor, pet);
 
         List<Appointment> allAppointments = List.of(ap1, ap2);
 
@@ -105,8 +105,8 @@ class AppointmentServiceTest {
     void testCreateAppointment() {
         User doctor = new User();
         Pet pet = new Pet();
-        Appointment ap = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor, pet);
-        Appointment createAp = new Appointment(3L, now, later, "Consultation", "The dog is sick", doctor, pet);
+        Appointment ap = new Appointment(3L, now, later, "Consultation", "The dog is sick","Title", doctor, pet);
+        Appointment createAp = new Appointment(3L, now, later, "Consultation", "The dog is sick","Title", doctor, pet);
 
         createAp.setId(1L);
         
@@ -123,12 +123,12 @@ class AppointmentServiceTest {
     void testUpdateAppointment() {
         User doctor = new User();
         Pet pet = new Pet();
-        Appointment ap = new Appointment(1L, now, later, "Consultation", "The dog is sick", doctor, pet);
+        Appointment ap = new Appointment(1L, now, later, "Consultation", "The dog is sick","Title", doctor, pet);
         Mockito.when(appointmentRepository.save(Mockito.any())).thenReturn(ap);
 
         appointmentService.saveAppointment(ap);
 
-        Appointment updateAp = new Appointment(1L, now, later, "Operation", "The dog is sick", doctor, pet);
+        Appointment updateAp = new Appointment(1L, now, later, "Operation", "The dog is sick","Title", doctor, pet);
                 
         Mockito.when(appointmentRepository.save(Mockito.any())).thenReturn(updateAp);
 

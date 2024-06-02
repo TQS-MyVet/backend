@@ -85,7 +85,7 @@ class AppointmentRestControllerIT {
         User test = userRepository.save(user);
         Pet testPet = petRepository.save(pet);
 
-        Appointment appointment = new Appointment(1L, now, later, "Consultation", "Notes", test, testPet);
+        Appointment appointment = new Appointment(1L, now, later, "Consultation", "Notes","Title", test, testPet);
 
         Appointment actualapt = repository.save(appointment);
 
@@ -105,7 +105,7 @@ class AppointmentRestControllerIT {
     void whenGetAppointmentsByDate_thenReturnAppointments() throws Exception {
         User test = userRepository.save(user);
         Pet testPet = petRepository.save(pet);
-        Appointment appointment = new Appointment(1L, now, later, "Consultation", "Notes", test, testPet);
+        Appointment appointment = new Appointment(1L, now, later, "Consultation", "Notes","Title", test, testPet);
 
         repository.save(appointment);
 
@@ -120,7 +120,7 @@ class AppointmentRestControllerIT {
     void whenGetAppointmentsByType_thenReturnAppointments() throws Exception {
         User test = userRepository.save(user);
         Pet testPet = petRepository.save(pet);
-        Appointment appointment = new Appointment(1L, now, later, "Consultation", "Notes", test, testPet);
+        Appointment appointment = new Appointment(1L, now, later, "Consultation", "Notes","Title", test, testPet);
 
         repository.save(appointment);
 
@@ -144,7 +144,7 @@ class AppointmentRestControllerIT {
         User test = userRepository.save(user);
         Pet testPet = petRepository.save(pet);
 
-        CreateAppointmentDTO appointment = new CreateAppointmentDTO(now, later, "Consultation", "Notes", test.getId(), testPet.getId());
+        CreateAppointmentDTO appointment = new CreateAppointmentDTO(now, later, "Consultation", "Notes","Title", test.getId(), testPet.getId());
 
         mvc.perform(post("/api/appointments")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -158,7 +158,7 @@ class AppointmentRestControllerIT {
     void whenDeleteAppointment_thenReturnOk() throws Exception {
         User test = userRepository.save(user);
         Pet testPet = petRepository.save(pet);
-        Appointment appointment = new Appointment(1L, now, later, "Consultation", "Notes", test, testPet);
+        Appointment appointment = new Appointment(1L, now, later, "Consultation", "Notes","Title", test, testPet);
 
         repository.save(appointment);
 
