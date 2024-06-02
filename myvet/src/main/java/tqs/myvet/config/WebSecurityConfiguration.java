@@ -50,7 +50,9 @@ public class WebSecurityConfiguration {
             request.requestMatchers(HttpMethod.POST, "/api/queues/receptionist/**").hasRole(receptionist);
             request.requestMatchers(HttpMethod.POST, "/api/queues/doctor/**").hasRole(doctorRole);
             request.requestMatchers(HttpMethod.DELETE, "/api/queues/receptionist").hasRole(receptionist);
-            request.requestMatchers(HttpMethod.DELETE, "/api/queues/doctor").hasRole(doctorRole);
+            request.requestMatchers(HttpMethod.DELETE, "/api/queues/doctor").hasAnyRole(doctorRole, receptionist);
+            request.requestMatchers(HttpMethod.POST, "/api/appointments").permitAll();
+            request.requestMatchers(HttpMethod.PUT,"/api/users/**").permitAll();
             request.requestMatchers(HttpMethod.POST, api).hasAnyRole(doctorRole, receptionist);
             request.requestMatchers(HttpMethod.DELETE, api).hasAnyRole(doctorRole, receptionist);
             request.requestMatchers(HttpMethod.PUT, api).hasAnyRole(doctorRole, receptionist);

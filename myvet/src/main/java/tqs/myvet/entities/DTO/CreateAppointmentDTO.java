@@ -16,6 +16,7 @@ public class CreateAppointmentDTO {
     private LocalDateTime endDate;
     private String type;
     private String docNotes;
+    private String title;
     private Long doctorId;
     private Long petId;
 }

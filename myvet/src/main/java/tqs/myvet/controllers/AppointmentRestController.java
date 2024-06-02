@@ -99,7 +99,7 @@ public class AppointmentRestController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet not found");
         }
 
-        Appointment newAppointment = new Appointment(null, appointment.getStartDate(), appointment.getEndDate(), appointment.getType(), appointment.getDocNotes(), user.get(), pet);
+        Appointment newAppointment = new Appointment(null, appointment.getStartDate(), appointment.getEndDate(), appointment.getType(), appointment.getDocNotes(),appointment.getTitle(), user.get(), pet);
 
         Appointment savedAppointment = appointmentService.saveAppointment(newAppointment);
         return new ResponseEntity<>(savedAppointment, HttpStatus.CREATED);
