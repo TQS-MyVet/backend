@@ -117,8 +117,8 @@ class UserRestControllerIT {
 
     @Test
     void whenGetUserPets_thenReturnPets() throws Exception {
-        Pet pet1 = new Pet(null, "Rex", "M", "2020-01-01", "Dog");
-        Pet pet2 = new Pet(null, "Mimi", "F", "2020-01-01", "Cat");
+        Pet pet1 = new Pet(null, "Rex", "M", "2020-01-01", "Dog",new User());
+        Pet pet2 = new Pet(null, "Mimi", "F", "2020-01-01", "Cat",new User());
 
         petRepository.save(pet1);
         petRepository.save(pet2);

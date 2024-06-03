@@ -76,8 +76,8 @@ class UserController_WithMockServiceTest {
     void setUp() {
 		mvc = MockMvcBuilders.webAppContextSetup(context).build();
         users = new ArrayList<>();
-        Pet pet1 = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
-        Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat");
+        Pet pet1 = new Pet(1L, "Rex", "M", "2020-01-01", "Dog",new User());
+        Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat",new User());
         users.add(new User(1L, "José Silva", "jose@gmail.com", "919165004", "batata123", List.of("USER"),
                 List.of(pet1, pet2)));
     }

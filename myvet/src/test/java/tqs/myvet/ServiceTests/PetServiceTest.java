@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import tqs.myvet.entities.Pet;
+import tqs.myvet.entities.User;
 import tqs.myvet.repositories.PetRepository;
 import tqs.myvet.services.Pet.PetServiceImpl;
 
@@ -29,8 +30,8 @@ class PetServiceTest {
 
     @BeforeEach
     public void setUp() {
-        Pet pet = new Pet(1L, "Fido", "Male", "2020-01-01", "Dog");
-        Pet pet2 = new Pet(2L, "Mimi", "Female", "2019-05-01", "Cat");
+        Pet pet = new Pet(1L, "Fido", "Male", "2020-01-01", "Dog",new User());
+        Pet pet2 = new Pet(2L, "Mimi", "Female", "2019-05-01", "Cat",new User());
 
         Mockito.when(petRepository.findById(pet.getId())).thenReturn(Optional.of(pet));
         Mockito.when(petRepository.findById(pet2.getId())).thenReturn(Optional.of(pet2));
@@ -96,8 +97,8 @@ class PetServiceTest {
 
     @Test
     void whenUpdatePet_thenReturnUpdatedPet() {
-        Pet pet = new Pet(1L, "Fido", "Male", "2020-01-01", "Dog");
-        Pet updatedPet = new Pet(1L, "Fido", "Female", "2020-01-01", "Dog");
+        Pet pet = new Pet(1L, "Fido", "Male", "2020-01-01", "Dog",new User());
+        Pet updatedPet = new Pet(1L, "Fido", "Female", "2020-01-01", "Dog",new User());
 
         Mockito.when(petRepository.findById(pet.getId())).thenReturn(Optional.of(pet));
         Mockito.when(petRepository.save(any())).thenReturn(updatedPet);
