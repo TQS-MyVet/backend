@@ -47,8 +47,8 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        pet = new Pet(1L, "Bobi", "Masculino", "15/05/2009", "Cão",new User());
-        pet2 = new Pet(2L, "Mimi", "Feminino", "15/05/2010", "Gato",new User());
+        pet = new Pet(1L, "Bobi", "Masculino", "15/05/2009", "Cão");
+        pet2 = new Pet(2L, "Mimi", "Feminino", "15/05/2010", "Gato");
         user = new User(1L, "José Silva", "jose@gmail.com", "919165004", "batata123", Arrays.asList("USER"),
                 Arrays.asList(pet, pet2));
 

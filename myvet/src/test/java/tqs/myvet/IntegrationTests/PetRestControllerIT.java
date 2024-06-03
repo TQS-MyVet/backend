@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import tqs.myvet.entities.Pet;
-import tqs.myvet.entities.User;
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
@@ -53,8 +52,8 @@ class PetRestControllerIT {
 
     @Test
     void whenGetPets_thenReturnPets() throws Exception {
-        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog",new User());
-        Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat",new User());
+        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
+        Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat");
         repository.save(pet);
         repository.save(pet2);
 
@@ -70,7 +69,7 @@ class PetRestControllerIT {
 
     @Test
     void whenGetPetById_thenReturnPet() throws Exception {
-        Pet pet = new Pet(null, "Rex", "M", "2020-01-01", "Dog",new User());
+        Pet pet = new Pet(null, "Rex", "M", "2020-01-01", "Dog");
         Pet ActualPet = repository.save(pet);
         
         mvc.perform(get("/api/pets/" + ActualPet.getId())
@@ -90,7 +89,7 @@ class PetRestControllerIT {
 
     @Test
     void whenGetPetsBySpecies_thenReturnPets() throws Exception {
-        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog",new User());
+        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
         repository.save(pet);
 
         mvc.perform(get("/api/pets/species/Dog")
@@ -112,8 +111,8 @@ class PetRestControllerIT {
 
     @Test
     void whenGetPetsByName_thenReturnPets() throws Exception {
-        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog",new User());
-        Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat",new User());
+        Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
+        Pet pet2 = new Pet(2L, "Mimi", "F", "2020-01-01", "Cat");
         repository.save(pet);
         repository.save(pet2);
 
@@ -138,7 +137,7 @@ class PetRestControllerIT {
     @WithMockUser(roles="DOCTOR")
     @Test
     void whenSavePet_thenReturnsSavedPet() throws Exception {
-        Pet newPet = new Pet(3L, "Birdy", "M", "2021-01-01", "Bird", new User());
+        Pet newPet = new Pet(3L, "Birdy", "M", "2021-01-01", "Bird");
 
         mvc.perform(post("/api/pets")
                 .contentType(MediaType.APPLICATION_JSON)

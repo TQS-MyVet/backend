@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import tqs.myvet.entities.Pet;
-import tqs.myvet.entities.User;
 import tqs.myvet.entities.DTO.CreatePetDTO;
 import tqs.myvet.repositories.UserRepository;
 import tqs.myvet.services.JWT.JWTService;
@@ -62,8 +61,8 @@ class PetController_WithMockServiceTest {
     void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(context).build();
         pets = new ArrayList<>();
-        pets.add(new Pet(1L, "Rex", "M", "2020-01-01", "Dog", new User()));
-        pets.add(new Pet(2L, "Mimi", "F", "2020-01-01", "Cat", new User()));
+        pets.add(new Pet(1L, "Rex", "M", "2020-01-01", "Dog"));
+        pets.add(new Pet(2L, "Mimi", "F", "2020-01-01", "Cat"));
     }
 
     @Test
@@ -155,7 +154,7 @@ class PetController_WithMockServiceTest {
     @WithMockUser(roles="DOCTOR")
     @Test
     void whenSavePet_thenReturnsSavedPet() throws Exception {
-        Pet newPet = new Pet(3L, "Birdy", "M", "2021-01-01", "Bird", new User());
+        Pet newPet = new Pet(3L, "Birdy", "M", "2021-01-01", "Bird");
         when(petService.savePet(any(Pet.class))).thenReturn(newPet);
 
         mvc.perform(post("/api/pets")
@@ -191,7 +190,7 @@ class PetController_WithMockServiceTest {
         petDTO.setBirthdate("2020-01-01");
         petDTO.setSpecies("Dog");
     
-        Pet updatedPet = new Pet(id, "Rexy", "M", "2020-01-01", "Dog", new User());
+        Pet updatedPet = new Pet(id, "Rexy", "M", "2020-01-01", "Dog");
     
         when(petService.updatePet(eq(id), any(Pet.class))).thenReturn(updatedPet);
     

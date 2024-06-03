@@ -54,7 +54,7 @@ class AppointmentRestControllerIT {
 
     private User user = new User(1L, "José Silva", "jose@gmail.com", "919165004", "batata123", List.of("USER"),
     List.of());
-    private Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog", new User());
+    private Pet pet = new Pet(1L, "Rex", "M", "2020-01-01", "Dog");
 
 
     LocalDateTime now = LocalDateTime.now();

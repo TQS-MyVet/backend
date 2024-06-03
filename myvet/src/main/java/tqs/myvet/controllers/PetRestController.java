@@ -11,7 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import tqs.myvet.entities.Pet;
-import tqs.myvet.entities.User;
 import tqs.myvet.entities.DTO.CreatePetDTO;
 import tqs.myvet.services.Pet.PetService;
 
@@ -60,7 +59,7 @@ public class PetRestController {
 
     @PostMapping
     public ResponseEntity<Pet> savePet(@RequestBody @Valid CreatePetDTO pet) {
-        Pet petToSave = new Pet(null, pet.getName(), pet.getSex(), pet.getBirthdate(), pet.getSpecies(), new User());
+        Pet petToSave = new Pet(null, pet.getName(), pet.getSex(), pet.getBirthdate(), pet.getSpecies());
         Pet savedPet = petService.savePet(petToSave);
         return new ResponseEntity<>(savedPet, HttpStatus.CREATED);
     }
@@ -78,7 +77,7 @@ public class PetRestController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Pet> updatePet(@PathVariable Long id, @RequestBody @Valid CreatePetDTO pet) {
-        Pet petToUpdate = new Pet(id, pet.getName(), pet.getSex(), pet.getBirthdate(), pet.getSpecies(), new User());
+        Pet petToUpdate = new Pet(id, pet.getName(), pet.getSex(), pet.getBirthdate(), pet.getSpecies());
         Pet updatedPet = petService.updatePet(id, petToUpdate);
 
         if (updatedPet == null) {
