@@ -123,5 +123,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email);
     }
 
+    public User addPetToUser(Long userId, Pet pet) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            User updatedUser = user.get();
+            List<Pet> pets = updatedUser.getPets();
+            pets.add(pet);
+            updatedUser.setPets(pets);
+            return userRepository.save(updatedUser);
+        } else {
+            return null;
+        }
+    }
+
 
 }

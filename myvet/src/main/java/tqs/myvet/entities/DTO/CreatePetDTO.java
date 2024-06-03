@@ -14,4 +14,5 @@ public class CreatePetDTO {
     private String sex;
     private String birthdate;
     private String species;
+    private Long userId;
 }
