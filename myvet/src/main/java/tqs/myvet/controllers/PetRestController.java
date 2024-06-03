@@ -13,15 +13,18 @@ import jakarta.validation.Valid;
 import tqs.myvet.entities.Pet;
 import tqs.myvet.entities.DTO.CreatePetDTO;
 import tqs.myvet.services.Pet.PetService;
+import tqs.myvet.services.User.UserService;
 
 @SecurityRequirement(name = "Authorization")
 @RestController
 @RequestMapping("/api/pets")
 public class PetRestController {
     private final PetService petService;
+    private final UserService userService;
 
-    public PetRestController(PetService petService) {
+    public PetRestController(PetService petService, UserService userService) {
         this.petService = petService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -61,6 +64,9 @@ public class PetRestController {
     public ResponseEntity<Pet> savePet(@RequestBody @Valid CreatePetDTO pet) {
         Pet petToSave = new Pet(null, pet.getName(), pet.getSex(), pet.getBirthdate(), pet.getSpecies());
         Pet savedPet = petService.savePet(petToSave);
+
+        // update user with the new pet
+        userService.addPetToUser(pet.getUserId(), savedPet);
         return new ResponseEntity<>(savedPet, HttpStatus.CREATED);
     }
 

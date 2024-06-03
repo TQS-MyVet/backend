@@ -25,4 +25,6 @@ public interface UserService {
     public List<User> getAllUsers();
 
     public Optional<User> getUserByEmail(String email);
+
+    public User addPetToUser(Long userId, Pet pet);
 }
