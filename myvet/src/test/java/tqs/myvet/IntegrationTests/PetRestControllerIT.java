@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import tqs.myvet.entities.Pet;
+import tqs.myvet.entities.DTO.CreatePetDTO;
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
@@ -137,8 +138,7 @@ class PetRestControllerIT {
     @WithMockUser(roles="DOCTOR")
     @Test
     void whenSavePet_thenReturnsSavedPet() throws Exception {
-        Pet newPet = new Pet(3L, "Birdy", "M", "2021-01-01", "Bird");
-
+        CreatePetDTO newPet = new CreatePetDTO("Birdy", "M", "2021-01-01", "Bird", 1L);
         mvc.perform(post("/api/pets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Utils.toJson(newPet)))

@@ -33,6 +33,7 @@ import tqs.myvet.repositories.UserRepository;
 import tqs.myvet.services.JWT.JWTService;
 import tqs.myvet.services.Pet.PetService;
 import tqs.myvet.services.User.CustomUserDetailsService;
+import tqs.myvet.services.User.UserService;
 import tqs.myvet.controllers.PetRestController;
 
 @WebMvcTest(PetRestController.class)
@@ -55,6 +56,9 @@ class PetController_WithMockServiceTest {
     @MockBean
     private PetService petService;
 
+    @MockBean
+    private UserService userService;
+    
     private List<Pet> pets;
 
     @BeforeEach
