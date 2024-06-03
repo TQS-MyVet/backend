@@ -35,6 +35,4 @@ public class Pet {
     @Column(nullable = false)
     private String species;
 
-    @ManyToOne
-    private User owner;
 }
