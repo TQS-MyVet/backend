@@ -48,9 +48,9 @@ public class WebSecurityConfiguration {
         .authorizeHttpRequests(request -> {
             request.requestMatchers(freeApiEndpoints).permitAll();
             request.requestMatchers(HttpMethod.POST, "/api/queues/receptionist/**").hasRole(receptionist);
-            request.requestMatchers(HttpMethod.POST, "/api/queues/doctor/**").hasRole(doctorRole);
+            request.requestMatchers(HttpMethod.POST, "/api/queues/doctor/**").hasAnyRole(doctorRole, receptionist);
             request.requestMatchers(HttpMethod.DELETE, "/api/queues/receptionist").hasRole(receptionist);
-            request.requestMatchers(HttpMethod.DELETE, "/api/queues/doctor").hasAnyRole(doctorRole, receptionist);
+            request.requestMatchers(HttpMethod.DELETE, "/api/queues/doctor").hasRole(doctorRole);
             request.requestMatchers(HttpMethod.POST, "/api/appointments").permitAll();
             request.requestMatchers(HttpMethod.PUT, "/api/appointments").permitAll();
             request.requestMatchers(HttpMethod.DELETE, "/api/appointments").permitAll();
