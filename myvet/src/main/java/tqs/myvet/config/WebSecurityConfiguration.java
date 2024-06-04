@@ -6,6 +6,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import tqs.myvet.services.User.CustomUserDetailsService;
 
@@ -45,7 +47,6 @@ public class WebSecurityConfiguration {
         
         http
         .csrf(AbstractHttpConfigurer::disable)
-        .cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(request -> {
             request.requestMatchers(freeApiEndpoints).permitAll();
             request.requestMatchers(HttpMethod.POST, "/api/queues/receptionist/**").hasRole(receptionist);
@@ -82,6 +83,17 @@ public class WebSecurityConfiguration {
         provider.setPasswordEncoder(passwordEncoder());
 
         return new ProviderManager(Arrays.asList(provider));
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfiguration() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://deti-tqs-03.ua.pt"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
     }
 
 }
