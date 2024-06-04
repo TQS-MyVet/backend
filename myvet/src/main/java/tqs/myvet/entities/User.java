@@ -45,6 +45,6 @@ public class User {
     private List<String> roles;
 
     @OneToMany
-    @JoinColumn(name = "pets_id")
+    @JoinColumn(name = "user_id")
     private List<Pet> pets;
 }
