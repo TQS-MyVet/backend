@@ -8,4 +8,6 @@ INSERT INTO users (id, email, name, password, phone, roles) VALUES
 SELECT setval('users_seq', 5);
 
 INSERT INTO pets (id, birthdate, name, sex, species, user_id) VALUES
-(1, '2024-01-01', 'Bobi', 'Male', 'Dog', 1);
+(1, '2024-01-01', 'Bobi', 'Male', 'Dog', 4);
+
+SELECT setval('pets_seq', 2);
